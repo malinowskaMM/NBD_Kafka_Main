@@ -1,6 +1,6 @@
-package pl.nbd.hotel.client;
+package pl.nbd.hotel.client.type;
 
-public enum ClientType {
+public enum ClientTypeName {
     Regular,
     Gold,
     Emerald,

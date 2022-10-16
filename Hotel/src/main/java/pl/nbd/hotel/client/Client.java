@@ -1,12 +1,10 @@
 package pl.nbd.hotel.client;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import pl.nbd.hotel.client.type.ClientType;
 
 @Entity
 @Getter
@@ -27,8 +25,8 @@ public class Client {
     @NotNull
     Address address;
 
-    @Enumerated
-    @NotNull
-    @Column(name = "CLIENT_TYPE")
+    @ManyToOne
+    @JoinColumn(name = "CLIENT_TYPE_NAME")
     ClientType clientType;
+
 }
