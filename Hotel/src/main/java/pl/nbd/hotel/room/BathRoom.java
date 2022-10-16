@@ -1,14 +1,15 @@
 package pl.nbd.hotel.room;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @DiscriminatorValue("BATH")
 public class BathRoom extends Room {
 
-    @Column(name = "BATH_TYPE")
-    String type;
+    @Enumerated(EnumType.STRING)
+    @Size(max = 20)
+    @Column(name = "BATH_TYPE", length = 20)
+    bathType bathType;
 
 }

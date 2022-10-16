@@ -2,6 +2,7 @@ package pl.nbd.hotel.client;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import pl.nbd.hotel.client.type.ClientType;
@@ -12,21 +13,23 @@ import pl.nbd.hotel.client.type.ClientType;
 public class Client {
 
     @Id
-    @Column(name = "PERSONAL_ID")
+    @Size(max = 11)
+    @Column(name = "PERSONAL_ID", length = 11)
     String personalId;
 
     @NotNull
-    @Column(name = "FIRST_NAME")
+    @Size(max = 35)
+    @Column(name = "FIRST_NAME", nullable = false, length = 35)
     String firstName;
 
-    @Column(name = "LAST_NAME")
+    @Size(max = 35)
+    @Column(name = "LAST_NAME", length = 35)
     String lastName;
 
-    @NotNull
     Address address;
 
     @ManyToOne
-    @JoinColumn(name = "CLIENT_TYPE_NAME")
+    @JoinColumn(name = "CLIENT_TYPE_NAME", nullable = false)
     ClientType clientType;
 
 }
