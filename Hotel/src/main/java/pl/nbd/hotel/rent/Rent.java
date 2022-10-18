@@ -14,7 +14,6 @@ import java.util.UUID;
 
 @Entity
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Rent extends AbstractEntity {
 
@@ -29,7 +28,7 @@ public class Rent extends AbstractEntity {
 
     @NotNull
     @Column(name = "END_TIME", nullable = false, columnDefinition = "TIMESTAMP CHECK (END_TIME > BEGIN_TIME)")
-    LocalDate endTime;
+    LocalDateTime endTime;
 
     @Column(name = "RENT_COST", nullable = false, columnDefinition = "INTEGER CHECK (RENT_COST >= 0)")
     @PositiveOrZero
@@ -46,5 +45,17 @@ public class Rent extends AbstractEntity {
 
     public String getRentInfo() {
         return id.toString().concat(" ").concat(beginTime.toString()).concat(" ").concat(endTime.toString()).concat(" ").concat(rentCost.toString()).concat(" ").concat(client.getClientInfo()).concat(" ").concat(room.getRoomInfo());
+    }
+
+    public Rent(UUID id, LocalDateTime beginTime, LocalDateTime endTime, Client client, Room room) {
+        this.id = id;
+        this.beginTime = beginTime;
+        this.endTime = endTime;
+        this.client = client;
+        this.room = room;
+    }
+
+    public void changeEndTime(LocalDateTime newEndTime) {
+        endTime = newEndTime;
     }
 }

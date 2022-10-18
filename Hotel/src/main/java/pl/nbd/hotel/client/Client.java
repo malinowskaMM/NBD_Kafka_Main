@@ -4,18 +4,21 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import pl.nbd.hotel.abstractEntity.AbstractEntity;
 import pl.nbd.hotel.client.type.ClientType;
+
+import java.util.UUID;
 
 @Entity
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Client {
+public class Client extends AbstractEntity {
 
     @Id
     @Size(max = 11)
     @Column(name = "PERSONAL_ID", length = 11)
-    String personalId;
+    UUID personalId;
 
     @NotNull
     @Size(max = 35)
@@ -33,7 +36,7 @@ public class Client {
     ClientType clientType;
 
     public String getClientInfo() {
-        return personalId.concat(" ").concat(firstName).concat(" ").concat(lastName).concat(" ").concat(address.getAddressInfo()).concat(" ").concat(clientType.getClientTypeInfo());
+        return personalId.toString().concat(" ").concat(firstName).concat(" ").concat(lastName).concat(" ").concat(address.getAddressInfo()).concat(" ").concat(clientType.getClientTypeInfo());
     }
 
     public float applyDiscount(int price) {
