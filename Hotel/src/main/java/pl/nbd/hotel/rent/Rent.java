@@ -3,8 +3,8 @@ package pl.nbd.hotel.rent;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import pl.nbd.hotel.abstractEntity.AbstractEntity;
 import pl.nbd.hotel.client.Client;
 import pl.nbd.hotel.room.Room;
 
@@ -14,8 +14,9 @@ import java.util.UUID;
 
 @Entity
 @Getter
-@Setter
-public class Rent {
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Rent extends AbstractEntity {
 
     @Id
     @NotNull
@@ -42,4 +43,8 @@ public class Rent {
     @ManyToOne
     @JoinColumn(name = "ROOM_NUMBER", nullable = false)
     Room room;
+
+    public String getRentInfo() {
+        return id.toString().concat(" ").concat(beginTime.toString()).concat(" ").concat(endTime.toString()).concat(" ").concat(rentCost.toString()).concat(" ").concat(client.getClientInfo()).concat(" ").concat(room.getRoomInfo());
+    }
 }

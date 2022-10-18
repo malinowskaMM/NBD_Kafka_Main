@@ -12,4 +12,8 @@ public class BathRoom extends Room {
     @Column(name = "BATH_TYPE", length = 20)
     bathType bathType;
 
+//    public float getActualRentalPrice() {
+//
+//    }
+
 }

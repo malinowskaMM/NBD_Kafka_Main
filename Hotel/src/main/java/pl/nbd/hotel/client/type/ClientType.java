@@ -18,5 +18,13 @@ public class ClientType {
     @NotNull
     @PositiveOrZero
     @Column(name = "DISCOUNT", nullable = false, columnDefinition = "INTEGER CHECK (DISCOUNT >= 0)")
-    private Integer discount;
+    public Integer discount;
+
+    public String getClientTypeInfo() {
+        return clientTypeName.name().concat(" ").concat(discount.toString());
+    }
+
+    public float applyDiscount(int price) {
+        return discount * price;
+    }
 }

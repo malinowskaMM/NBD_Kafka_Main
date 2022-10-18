@@ -3,13 +3,13 @@ package pl.nbd.hotel.client;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import pl.nbd.hotel.client.type.ClientType;
 
 @Entity
 @Getter
-@Setter
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Client {
 
     @Id
@@ -31,5 +31,13 @@ public class Client {
     @ManyToOne
     @JoinColumn(name = "CLIENT_TYPE_NAME", nullable = false)
     ClientType clientType;
+
+    public String getClientInfo() {
+        return personalId.concat(" ").concat(firstName).concat(" ").concat(lastName).concat(" ").concat(address.getAddressInfo()).concat(" ").concat(clientType.getClientTypeInfo());
+    }
+
+    public float applyDiscount(int price) {
+        return clientType.applyDiscount(price);
+    }
 
 }

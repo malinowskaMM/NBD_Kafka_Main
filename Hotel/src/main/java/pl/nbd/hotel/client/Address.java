@@ -28,4 +28,7 @@ public class Address {
     @Pattern(regexp = "^\\d{2}-\\d{3}$")
     @Column(name = "POSTAL_CODE", nullable = false, columnDefinition = "VARCHAR(6) CHECK (POSTAL_CODE ~ '^\\d{2}-\\d{3}$')")
     private String postalCode;
+
+    public String getAddressInfo() {
+        return street.concat(" ").concat(streetNumber).concat(",").concat(cityName).concat(" ").concat(postalCode);    }
 }
