@@ -16,7 +16,7 @@ public class ClientType {
 
     @Id
     @Enumerated(EnumType.STRING)
-    @Size(max = 20)
+    //@Size(max = 20)
     @Column(name = "CLIENT_TYPE_NAME", nullable = false, length = 20)
     private ClientTypeName clientTypeName;
 
