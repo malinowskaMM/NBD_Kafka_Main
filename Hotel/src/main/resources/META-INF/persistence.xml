@@ -22,6 +22,7 @@ https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL95Dialect"/>
             <property name="hibernate.show_sql" value="true" />
             <property name="hibernate.format_sql" value="true" />
+            <property name="hibernate.connection.isolation" value="2"/>
         </properties>
     </persistence-unit>
 </persistence>
