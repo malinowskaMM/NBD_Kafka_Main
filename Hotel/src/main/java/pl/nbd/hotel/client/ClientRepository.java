@@ -5,7 +5,6 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import pl.nbd.hotel.client.Client;
 import pl.nbd.hotel.repository.Repository;
 
 import java.util.*;
@@ -21,7 +20,6 @@ public class ClientRepository implements Repository<Client> {
     @Transactional
     public Client findById(String id) {
         Client client = entityManager.find(Client.class, id);
-        entityManager.detach(client);
         return client;
     }
 

@@ -4,12 +4,13 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import pl.nbd.hotel.repository.Repository;
-import pl.nbd.hotel.room.Room;
 
 import java.util.List;
 import java.util.function.Predicate;
 
+@AllArgsConstructor
 public class RoomRepository implements Repository<Room> {
 
     @PersistenceContext
@@ -19,7 +20,6 @@ public class RoomRepository implements Repository<Room> {
     @Transactional
     public Room findById(String id) {
         Room room = entityManager.find(Room.class, id);
-        entityManager.detach(room);
         return room;
     }
 

@@ -35,5 +35,5 @@ public class Address {
     private String postalCode;
 
     public String getAddressInfo() {
-        return street.concat(" ").concat(streetNumber).concat(",").concat(cityName).concat(" ").concat(postalCode);    }
+        return street.concat(" ").concat(streetNumber).concat(" ").concat(cityName).concat(" ").concat(postalCode);    }
 }
