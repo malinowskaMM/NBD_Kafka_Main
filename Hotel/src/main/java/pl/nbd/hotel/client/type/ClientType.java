@@ -3,22 +3,20 @@ package pl.nbd.hotel.client.type;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ClientType {
 
     @Id
     @Enumerated(EnumType.STRING)
-    //@Size(max = 20)
     @Column(name = "CLIENT_TYPE_NAME", nullable = false, length = 20)
-    private ClientTypeName clientTypeName;
+    public ClientTypeName clientTypeName;
 
     @NotNull
     @PositiveOrZero
@@ -29,7 +27,7 @@ public class ClientType {
         return clientTypeName.name().concat(" ").concat(discount.toString());
     }
 
-    public float applyDiscount(int price) {
-        return discount * price;
+    public double applyDiscount(double price) {
+        return price - (price * discount * 0.01);
     }
 }

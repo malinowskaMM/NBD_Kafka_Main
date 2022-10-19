@@ -1,52 +1,37 @@
 package pl.nbd.hotel.room;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
-import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import pl.nbd.hotel.repository.Repository;
-import pl.nbd.hotel.room.Room;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
+@RequiredArgsConstructor
 public class RoomRepository implements Repository<Room> {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     @Override
-    @Transactional
-    public Room findById(String id) {
-        Room room = entityManager.find(Room.class, id);
-        entityManager.detach(room);
+    public Optional<Room> findById(String id) {
+        return Optional.of(entityManager.find(Room.class, id));
+    }
+
+    @Override
+    public Room save(Room room) {
+        entityManager.persist(room);
         return room;
     }
 
     @Override
-    @Transactional
-    public Room save(Room object) {
-        entityManager.getTransaction().begin();
-        if(object != null) {
-            entityManager.persist(object);
-            entityManager.getTransaction().commit();
-        } else {
-            entityManager.getTransaction().rollback();
-        }
-        return object;
-    }
-
-    @Override
-    @Transactional
     public List<Room> find(Predicate<Room> predicate) {
         return findAll().stream().filter(predicate).toList();
     }
 
     @Override
-    @Transactional
     public List<Room> findAll() {
-        TypedQuery<Room> query = entityManager.createQuery("SELECT c FROM Room c", Room.class);
-        return query.getResultList();
+        return entityManager.createQuery("SELECT c FROM Room c", Room.class).getResultList();
     }
 
     @Override
@@ -65,10 +50,7 @@ public class RoomRepository implements Repository<Room> {
     }
 
     @Override
-    @Transactional
     public void remove(Room object) {
-        entityManager.getTransaction().begin();
         entityManager.remove(object);
-        entityManager.getTransaction().commit();
     }
 }

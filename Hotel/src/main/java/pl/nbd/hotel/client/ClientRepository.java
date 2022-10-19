@@ -1,54 +1,37 @@
 package pl.nbd.hotel.client;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
-import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
-import pl.nbd.hotel.client.Client;
+import lombok.RequiredArgsConstructor;
 import pl.nbd.hotel.repository.Repository;
 
 import java.util.*;
 import java.util.function.Predicate;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ClientRepository implements Repository<Client> {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     @Override
-    @Transactional
-    public Client findById(String id) {
-        Client client = entityManager.find(Client.class, id);
-        entityManager.detach(client);
+    public Optional<Client> findById(String id) {
+
+        return Optional.ofNullable(entityManager.find(Client.class, id));
+    }
+
+    @Override
+    public Client save(Client client) {
+        entityManager.persist(client);
         return client;
     }
 
     @Override
-    @Transactional
-    public Client save(Client object) {
-        entityManager.getTransaction().begin();
-        if(object != null) {
-            entityManager.persist(object);
-            entityManager.getTransaction().commit();
-        } else {
-            entityManager.getTransaction().rollback();
-        }
-        return object;
-    }
-
-    @Override
-    @Transactional
     public List<Client> find(Predicate<Client> predicate) {
         return findAll().stream().filter(predicate).toList();
     }
 
     @Override
-    @Transactional
     public List<Client> findAll() {
-        TypedQuery<Client> query = entityManager.createQuery("SELECT c FROM Client c", Client.class);
-        return query.getResultList();
+        return entityManager.createQuery("SELECT c FROM Client c", Client.class).getResultList();
     }
 
     @Override
@@ -67,10 +50,7 @@ public class ClientRepository implements Repository<Client> {
     }
 
     @Override
-    @Transactional
     public void remove(Client object) {
-        entityManager.getTransaction().begin();
         entityManager.remove(object);
-        entityManager.getTransaction().commit();
     }
 }
