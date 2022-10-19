@@ -1,15 +1,16 @@
-package pl.nbd.hotel.repository;
+package pl.nbd.hotel.room;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
+import pl.nbd.hotel.repository.Repository;
 import pl.nbd.hotel.room.Room;
 
 import java.util.List;
 import java.util.function.Predicate;
 
-public class RoomRepository implements Repository<Room>{
+public class RoomRepository implements Repository<Room> {
 
     @PersistenceContext
     private EntityManager entityManager;

@@ -1,4 +1,4 @@
-package pl.nbd.hotel.repository;
+package pl.nbd.hotel.client;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -6,12 +6,13 @@ import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import pl.nbd.hotel.client.Client;
+import pl.nbd.hotel.repository.Repository;
 
 import java.util.*;
 import java.util.function.Predicate;
 
 @AllArgsConstructor
-public class ClientRepository implements Repository<Client>{
+public class ClientRepository implements Repository<Client> {
 
     @PersistenceContext
     private EntityManager entityManager;

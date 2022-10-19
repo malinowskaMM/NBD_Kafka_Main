@@ -1,14 +1,10 @@
-package pl.nbd.hotel.manager;
+package pl.nbd.hotel.client;
 
 import lombok.AllArgsConstructor;
-import pl.nbd.hotel.client.Address;
-import pl.nbd.hotel.client.Client;
 import pl.nbd.hotel.client.type.ClientType;
 import pl.nbd.hotel.client.type.ClientTypeName;
-import pl.nbd.hotel.repository.ClientRepository;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Predicate;
 
 @AllArgsConstructor

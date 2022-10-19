@@ -1,11 +1,9 @@
-package pl.nbd.hotel.manager;
+package pl.nbd.hotel.rent;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.LockModeType;
 import lombok.AllArgsConstructor;
 import pl.nbd.hotel.client.Client;
 import pl.nbd.hotel.rent.Rent;
-import pl.nbd.hotel.repository.RentRepository;
+import pl.nbd.hotel.rent.RentRepository;
 import pl.nbd.hotel.room.Room;
 
 import java.time.LocalDateTime;

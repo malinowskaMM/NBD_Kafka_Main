@@ -1,11 +1,6 @@
-package pl.nbd.hotel.manager;
+package pl.nbd.hotel.room;
 
 import lombok.AllArgsConstructor;
-import pl.nbd.hotel.repository.RoomRepository;
-import pl.nbd.hotel.room.BathRoom;
-import pl.nbd.hotel.room.Room;
-import pl.nbd.hotel.room.ShowerRoom;
-import pl.nbd.hotel.room.bathType;
 
 import java.util.List;
 import java.util.function.Predicate;

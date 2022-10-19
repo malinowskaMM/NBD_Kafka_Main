@@ -1,4 +1,4 @@
-package pl.nbd.hotel.repository;
+package pl.nbd.hotel.rent;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
@@ -6,11 +6,12 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import pl.nbd.hotel.rent.Rent;
+import pl.nbd.hotel.repository.Repository;
 
 import java.util.List;
 import java.util.function.Predicate;
 
-public class RentRepository implements Repository<Rent>{
+public class RentRepository implements Repository<Rent> {
 
     @PersistenceContext
     private EntityManager entityManager;
