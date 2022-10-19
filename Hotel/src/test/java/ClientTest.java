@@ -20,7 +20,7 @@ public class ClientTest {
         ClientRepository clientRepository = new ClientRepository(entityManager);
 
         ClientType clientType = new ClientType(ClientTypeName.Diamond, 15);
-        Client client = new Client(UUID.randomUUID(), "John", "Nowak", new Address("12th Street", "12", "New York", "00-001"),
+        Client client = new Client("11111111111", "John", "Nowak", new Address("12th Street", "12", "New York", "00-001"),
                 clientType);
 
         entityManager.persist(clientType);
@@ -37,11 +37,11 @@ public class ClientTest {
         entityManager.getTransaction().begin();
         entityManager.createNativeQuery("INSERT INTO clienttype(client_type_name, discount) VALUES ('Diamond', 15);").executeUpdate();
         entityManager.createNativeQuery("INSERT INTO client (personal_id, version, city_name, postal_code, street, street_number, first_name, last_name, client_type_name) " +
-                "VALUES (\'38c75e74-4fd5-11ed-bdc3-0242ac120002\', 1, 'cos', '96-002', 'ktos', 'ulica', 'number', 'Hubert', 'Diamond');").executeUpdate();
+                "VALUES ('11111111111', 1, 'cos', '96-002', 'ktos', 'ulica', 'number', 'Hubert', 'Diamond');").executeUpdate();
         entityManager.getTransaction().commit();
 
         List<Client> listEmployee = entityManager.createQuery("SELECT e FROM Client e").getResultList();
-        Client employee = entityManager.find(Client.class, UUID.fromString("38c75e74-4fd5-11ed-bdc3-0242ac120002"));
+        Client employee = entityManager.find(Client.class, "11111111111");
         System.out.println(employee.getLastName());
 //        Client client = entityManager.createQuery("SELECT e FROM Client e WHERE Client .clientType= '12345678912'")
 //                .getSingleResult();

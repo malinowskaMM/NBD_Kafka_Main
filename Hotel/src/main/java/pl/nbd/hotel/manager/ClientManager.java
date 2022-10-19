@@ -16,7 +16,7 @@ public class ClientManager {
     ClientRepository clientRepository;
 
     Client registerClient(String firstName, String lastName, String personalId, Address address) {
-        Client client = new Client(UUID.fromString(personalId),firstName,lastName,address, new ClientType(ClientTypeName.Regular, 0));
+        Client client = new Client(personalId,firstName,lastName,address, new ClientType(ClientTypeName.Regular, 0));
         clientRepository.save(client);
         return client;
     }

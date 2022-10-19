@@ -16,9 +16,9 @@ import java.util.UUID;
 public class Client extends AbstractEntity {
 
     @Id
-    //@Size(max = 16)
-    @Column(name = "PERSONAL_ID", length = 16)
-    UUID personalId;
+    @Size(max = 11)
+    @Column(name = "PERSONAL_ID", length = 11)
+    String personalId;
 
     @NotNull
     @Size(max = 35)
