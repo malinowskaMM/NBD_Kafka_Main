@@ -1,5 +1,7 @@
 package pl.nbd.hotel.manager;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import lombok.AllArgsConstructor;
 import pl.nbd.hotel.client.Client;
 import pl.nbd.hotel.rent.Rent;
@@ -26,11 +28,11 @@ public class RentManager {
     }
 
     List<Rent> getAllClientRents(Client client) {
-        return currentRents.findAll().stream().filter(rent -> rent.getClient().equals(client)).toList();
+        return currentRents.find(rent -> rent.getClient().equals(client));
     }
 
     List<Rent> getRoomRent(Room room) {
-        return currentRents.findAll().stream().filter(rent -> rent.getRoom().equals(room)).toList();
+        return currentRents.find(rent -> rent.getRoom().equals(room));
     }
 
     Double getClientBalanceInValue(Client client) {
@@ -43,11 +45,11 @@ public class RentManager {
     }
 
     List<Rent> findCurrentRents(Predicate<Rent> predicate) {
-        return currentRents.findAll().stream().filter(predicate).toList();
+        return currentRents.find(predicate);
     }
 
     List<Rent> findArchivedRents(Predicate<Rent> predicate) {
-        return archiveRents.findAll().stream().filter(predicate).toList();
+        return archiveRents.find(predicate);
     }
 
     List<Rent> findAllRents() {

@@ -30,7 +30,7 @@ public class ClientManager {
     }
 
     List<Client> findClients(Predicate<Client> predicate) {
-        return clientRepository.findAll().stream().filter(predicate).toList();
+        return clientRepository.find(predicate);
     }
 
     String getAllClientsReport() {

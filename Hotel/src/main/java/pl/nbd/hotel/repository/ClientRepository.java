@@ -6,7 +6,6 @@ import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import pl.nbd.hotel.client.Client;
-import pl.nbd.hotel.room.Room;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -20,20 +19,28 @@ public class ClientRepository implements Repository<Client>{
     @Override
     @Transactional
     public Client findById(String id) {
-        return entityManager.find(Client.class, id);
+        Client client = entityManager.find(Client.class, id);
+        entityManager.detach(client);
+        return client;
     }
 
     @Override
     @Transactional
     public Client save(Client object) {
-        entityManager.persist(object);
+        entityManager.getTransaction().begin();
+        if(object != null) {
+            entityManager.persist(object);
+            entityManager.getTransaction().commit();
+        } else {
+            entityManager.getTransaction().rollback();
+        }
         return object;
     }
 
     @Override
     @Transactional
-    public Client find(Predicate<Client> predicate) {
-        return entityManager.find(Client.class, predicate);
+    public List<Client> find(Predicate<Client> predicate) {
+        return findAll().stream().filter(predicate).toList();
     }
 
     @Override
@@ -61,6 +68,8 @@ public class ClientRepository implements Repository<Client>{
     @Override
     @Transactional
     public void remove(Client object) {
+        entityManager.getTransaction().begin();
         entityManager.remove(object);
+        entityManager.getTransaction().commit();
     }
 }

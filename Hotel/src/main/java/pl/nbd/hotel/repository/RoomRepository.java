@@ -17,20 +17,28 @@ public class RoomRepository implements Repository<Room>{
     @Override
     @Transactional
     public Room findById(String id) {
-        return entityManager.find(Room.class, id);
+        Room room = entityManager.find(Room.class, id);
+        entityManager.detach(room);
+        return room;
     }
 
     @Override
     @Transactional
     public Room save(Room object) {
-        entityManager.persist(object);
+        entityManager.getTransaction().begin();
+        if(object != null) {
+            entityManager.persist(object);
+            entityManager.getTransaction().commit();
+        } else {
+            entityManager.getTransaction().rollback();
+        }
         return object;
     }
 
     @Override
     @Transactional
-    public Room find(Predicate<Room> predicate) {
-        return entityManager.find(Room.class, predicate);
+    public List<Room> find(Predicate<Room> predicate) {
+        return findAll().stream().filter(predicate).toList();
     }
 
     @Override
@@ -58,6 +66,8 @@ public class RoomRepository implements Repository<Room>{
     @Override
     @Transactional
     public void remove(Room object) {
+        entityManager.getTransaction().begin();
         entityManager.remove(object);
+        entityManager.getTransaction().commit();
     }
 }

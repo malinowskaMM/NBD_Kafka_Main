@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 public interface Repository<T> {
     T findById(String id);
     T save(T object);
-    T find(Predicate<T> predicate);
+    List<T> find(Predicate<T> predicate);
     List<T> findAll();
     String getReport();
     int getSize();

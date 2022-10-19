@@ -1,11 +1,11 @@
 package pl.nbd.hotel.repository;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import pl.nbd.hotel.rent.Rent;
-import pl.nbd.hotel.room.Room;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -18,20 +18,30 @@ public class RentRepository implements Repository<Rent>{
     @Override
     @Transactional
     public Rent findById(String id) {
-        return entityManager.find(Rent.class, id);
+        Rent rent = entityManager.find(Rent.class, id);
+        entityManager.detach(rent);
+        return rent;
     }
 
     @Override
     @Transactional
     public Rent save(Rent object) {
-        entityManager.persist(object);
+        entityManager.getTransaction().begin();
+        if(object != null) {
+            entityManager.lock(object.getRoom(), LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+            entityManager.persist(object);
+            entityManager.getTransaction().commit();
+        } else {
+            entityManager.getTransaction().rollback();
+        }
         return object;
     }
 
     @Override
     @Transactional
-    public Rent find(Predicate<Rent> predicate) {
-        return entityManager.find(Rent.class, predicate);
+    public List<Rent> find(Predicate<Rent> predicate) {
+        List<Rent> rents = findAll();
+        return rents.stream().filter(predicate).toList();
     }
 
     @Override
@@ -59,6 +69,8 @@ public class RentRepository implements Repository<Rent>{
     @Override
     @Transactional
     public void remove(Rent object) {
+        entityManager.getTransaction().begin();
         entityManager.remove(object);
+        entityManager.getTransaction().commit();
     }
 }

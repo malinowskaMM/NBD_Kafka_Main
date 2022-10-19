@@ -29,7 +29,7 @@ public class RoomManager {
     }
 
     List<Room> findRooms(Predicate<Room> predicate) {
-        return roomRepository.findAll().stream().filter(predicate).toList();
+        return roomRepository.find(predicate);
     }
 
     List<Room> findAllRooms() {
