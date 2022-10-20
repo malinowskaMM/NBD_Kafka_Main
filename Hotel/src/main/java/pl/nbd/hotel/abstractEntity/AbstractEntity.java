@@ -11,10 +11,6 @@ import java.util.UUID;
 @MappedSuperclass
 public abstract class AbstractEntity implements Serializable {
 
-//    @Embedded
-//    @NotNull
-//    private UUID id;
-
     @Version
     private long version;
 }

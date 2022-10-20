@@ -18,9 +18,9 @@ public class ClientTest {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         ClientRepository clientRepository = new ClientRepository(entityManager);
 
-        ClientType clientType = new ClientType(ClientTypeName.Diamond, 15);
+        ClientType clientType = new ClientType(ClientTypeName.DIAMOND, 15);
         Client client = new Client("11111111111", "John", "Nowak", new Address("12th Street", "12", "New York", "00-001"),
-                clientType);
+               0., clientType);
 
         entityManager.persist(clientType);
 
@@ -37,6 +37,25 @@ public class ClientTest {
         entityManager.createNativeQuery("INSERT INTO clienttype(client_type_name, discount) VALUES ('Diamond', 15);").executeUpdate();
         entityManager.createNativeQuery("INSERT INTO client (personal_id, version, city_name, postal_code, street, street_number, first_name, last_name, client_type_name) " +
                 "VALUES ('11111111111', 1, 'cos', '96-002', 'ktos', 'ulica', 'number', 'Hubert', 'Diamond');").executeUpdate();
+        entityManager.getTransaction().commit();
+
+        List<Client> listEmployee = entityManager.createQuery("SELECT e FROM Client e").getResultList();
+        Client employee = entityManager.find(Client.class, "11111111111");
+        System.out.println(employee.getLastName());
+//        Client client = entityManager.createQuery("SELECT e FROM Client e WHERE Client .clientType= '12345678912'")
+//                .getSingleResult();
+    }
+
+    @Test
+    public void test3() {
+        EntityManager  entityManager = Persistence.createEntityManagerFactory("HOTEL")
+                .createEntityManager();
+        //Dodawanie do bazy z uzyciem transakcji
+        entityManager.getTransaction().begin();
+        entityManager.createNativeQuery("INSERT INTO clienttype(client_type_name, discount) VALUES ('Diamond', 15);").executeUpdate();
+        entityManager.createNativeQuery("INSERT INTO client (personal_id, version, city_name, postal_code, street, street_number, first_name, last_name, client_type_name) " +
+                "VALUES ('11111111111', 1, 'cos', '96-002', 'ktos', 'ulica', 'number', 'Hubert', 'Diamond');").executeUpdate();
+
         entityManager.getTransaction().commit();
 
         List<Client> listEmployee = entityManager.createQuery("SELECT e FROM Client e").getResultList();

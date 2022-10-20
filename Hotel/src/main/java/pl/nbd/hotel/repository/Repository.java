@@ -1,10 +1,11 @@
 package pl.nbd.hotel.repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 public interface Repository<T> {
-    T findById(String id);
+    Optional<T> findById(String id);
     T save(T object);
     List<T> find(Predicate<T> predicate);
     List<T> findAll();

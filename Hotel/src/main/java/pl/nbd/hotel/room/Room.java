@@ -33,8 +33,4 @@ public abstract class Room {
     public String getRoomInfo() {
         return roomNumber.concat(" ").concat(price.toString()).concat(" ").concat(roomCapacity.toString());
     }
-
-//    public float getActualRentalPrice() {
-//
-//    }
 }

@@ -2,30 +2,27 @@ package pl.nbd.hotel.rent;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
-import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
-import jakarta.transaction.Transactional;
-import pl.nbd.hotel.rent.Rent;
+import lombok.RequiredArgsConstructor;
 import pl.nbd.hotel.repository.Repository;
+import pl.nbd.hotel.room.Room;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
+@RequiredArgsConstructor
 public class RentRepository implements Repository<Rent> {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     @Override
-    @Transactional
-    public Rent findById(String id) {
-        Rent rent = entityManager.find(Rent.class, id);
-        entityManager.detach(rent);
-        return rent;
+    public Optional<Rent> findById(String id) {
+        return Optional.of(entityManager.find(Rent.class, id));
     }
 
     @Override
-    @Transactional
     public Rent save(Rent object) {
         entityManager.getTransaction().begin();
         if(object != null) {
@@ -39,14 +36,12 @@ public class RentRepository implements Repository<Rent> {
     }
 
     @Override
-    @Transactional
     public List<Rent> find(Predicate<Rent> predicate) {
         List<Rent> rents = findAll();
         return rents.stream().filter(predicate).toList();
     }
 
     @Override
-    @Transactional
     public List<Rent> findAll() {
         TypedQuery<Rent> query = entityManager.createQuery("SELECT c FROM Rent c", Rent.class);
         return query.getResultList();
@@ -68,10 +63,14 @@ public class RentRepository implements Repository<Rent> {
     }
 
     @Override
-    @Transactional
     public void remove(Rent object) {
-        entityManager.getTransaction().begin();
         entityManager.remove(object);
-        entityManager.getTransaction().commit();
     }
+
+    public List<Rent> getRentsForRoom(String roomNumber, LocalDateTime beginTime, LocalDateTime endTime) {
+        TypedQuery<Rent> query = entityManager.createQuery("SELECT c FROM Rent c WHERE c.id = ?1 AND (c.beginTime BETWEEN ?2 AND ?3 OR c.endTime BETWEEN ?2 AND ?3)", Rent.class);
+        return query.setParameter(1, roomNumber).setParameter(2, beginTime).setParameter(3, endTime).getResultList();
+    }
+
+
 }
