@@ -44,7 +44,7 @@ public class RentRepository implements Repository<Rent> {
     @Override
     public String getReport() {
         final StringBuilder description = new StringBuilder();
-        for (Rent r: findAll()) {
+        for (Rent r : findAll()) {
             description.append(r.getRentInfo());
             description.append(", ");
         }
@@ -62,15 +62,12 @@ public class RentRepository implements Repository<Rent> {
     }
 
     public List<Rent> getRentsForRoom(String roomNumber, LocalDateTime beginTime, LocalDateTime endTime) {
-
         return find(
                 rent -> ((rent.getRoom().getRoomNumber().equals(roomNumber))
-                &&
-                ((rent.getBeginTime().isAfter(beginTime) && rent.getEndTime().isBefore(beginTime))
-                        ||
-                        ((rent.getBeginTime().isAfter(endTime) && rent.getEndTime().isBefore(endTime)))
-                ||
-                        (rent.getBeginTime().isEqual(beginTime) && rent.getEndTime().isEqual(endTime))))
+                        &&
+                        ((beginTime.isAfter(rent.getBeginTime()) && beginTime.isBefore(rent.getEndTime()))
+                || (endTime.isAfter(rent.getBeginTime()) && endTime.isBefore(rent.getEndTime()))
+                || (beginTime.isEqual(rent.getBeginTime()) && endTime.isEqual(rent.getEndTime()))))
         );
     }
 

@@ -10,13 +10,11 @@ import pl.nbd.hotel.client.type.ClientTypeName;
 import pl.nbd.hotel.rent.Rent;
 import pl.nbd.hotel.rent.RentManager;
 import pl.nbd.hotel.rent.RentRepository;
-import pl.nbd.hotel.room.BathRoom;
-import pl.nbd.hotel.room.Room;
-import pl.nbd.hotel.room.ShowerRoom;
-import pl.nbd.hotel.room.bathType;
+import pl.nbd.hotel.room.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -27,6 +25,7 @@ public class RentRepositoryTest {
     EntityManagerFactory entityManagerFactory;
     EntityManager entityManager;
     RentRepository rentRepository;
+    RoomRepository roomRepository;
     Rent rentExample;
     Client clientExample;
     Room roomExample;
@@ -37,7 +36,7 @@ public class RentRepositoryTest {
         entityManagerFactory = Persistence.createEntityManagerFactory("HOTEL");
         entityManager = entityManagerFactory.createEntityManager();
         rentRepository = new RentRepository(entityManager);
-
+        roomRepository = new RoomRepository(entityManager);
         entityManager.getTransaction().begin();
         entityManager.createNativeQuery("INSERT INTO clientType(client_type_name, discount) VALUES ('DIAMOND', 15);").executeUpdate();
         entityManager.createNativeQuery("INSERT INTO client (personal_id, version, city_name, postal_code, street, street_number, first_name, last_name, client_type_name, money_spent) " +
@@ -127,11 +126,39 @@ public class RentRepositoryTest {
         RentManager rentManager = new RentManager(entityManager);
         rentManager.rentRoom(clientExample2, roomExample2, LocalDateTime.parse("2022-10-10 13:10:00", formatter), LocalDateTime.parse("2022-10-25 13:10:00", formatter));
         assertEquals(3, rentRepository.getSize());
+        Room room = roomRepository.findById("3");
+        rentManager.rentRoom(clientExample3, room, LocalDateTime.parse("2022-10-10 13:10:00", formatter), LocalDateTime.parse("2022-10-25 13:10:00", formatter));
+        assertEquals(3, rentRepository.getSize());
+        room = roomRepository.findById("3");
+        rentManager.rentRoom(clientExample3, room, LocalDateTime.parse("2021-10-11 13:10:00", formatter), LocalDateTime.parse("2021-10-25 13:10:00", formatter));
+        assertEquals(4, rentRepository.getSize());
+    }
+
+    @Test
+    public void shouldNotAllowRentSameRoomConcurrent() {
+        assertEquals(2, rentRepository.getSize());
+        Room roomExample2 = new ShowerRoom("3", 100.0, 1, false);
+        Client clientExample2 = new Client("11010000000","imie2", "nazwisko2", new Address("ulica2", "numer2", "miasto2", "00-111"), 0.0, new ClientType(ClientTypeName.DIAMOND, 15));
+        Client clientExample3 = new Client("10000000000","imie3", "nazwisko3", new Address("ulica3", "numer3", "miasto3", "01-101"), 0.0, new ClientType(ClientTypeName.DIAMOND, 15));
+
+        entityManager.getTransaction().begin();
+        entityManager.persist(roomExample2);
+        entityManager.persist(clientExample2);
+        entityManager.persist(clientExample3);
+        entityManager.getTransaction().commit();
+
+        RentManager rentManager = new RentManager(entityManager);
+        rentManager.rentRoom(clientExample2, roomExample2, LocalDateTime.parse("2022-10-10 13:10:00", formatter), LocalDateTime.parse("2022-10-25 13:10:00", formatter));
+        assertEquals(3, rentRepository.getSize());
 
         rentManager.rentRoom(clientExample3, roomExample2, LocalDateTime.parse("2022-10-10 13:10:00", formatter), LocalDateTime.parse("2022-10-25 13:10:00", formatter));
         assertEquals(3, rentRepository.getSize());
 
-        rentManager.rentRoom(clientExample3, roomExample2, LocalDateTime.parse("2022-10-11 13:10:00", formatter), LocalDateTime.parse("2022-10-25 13:10:00", formatter));
+        rentManager.rentRoom(clientExample3, roomExample2, LocalDateTime.parse("2021-10-11 13:10:00", formatter), LocalDateTime.parse("2021-10-25 13:10:00", formatter));
         assertEquals(3, rentRepository.getSize());
+
+        Room room = roomRepository.findById("3");
+        rentManager.rentRoom(clientExample3, room, LocalDateTime.parse("2021-10-11 13:10:00", formatter), LocalDateTime.parse("2021-10-25 13:10:00", formatter));
+        assertEquals(4, rentRepository.getSize());
     }
 }
