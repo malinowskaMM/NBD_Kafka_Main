@@ -1,6 +1,7 @@
 package pl.nbd.hotel.room;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.RollbackException;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -10,9 +11,12 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 public class RoomManager {
+    @PersistenceContext
     private final EntityManager entityManager;
+
     private final RoomRepository roomRepository;
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+
     public RoomManager(EntityManager entityManager) {
         this.entityManager = entityManager;
         this.roomRepository = new RoomRepository(entityManager);
@@ -23,7 +27,7 @@ public class RoomManager {
         if (validator.validate(room).size() == 0) {
             try {
                 entityManager.getTransaction().begin();
-                if (roomRepository.findById(room.roomNumber).isPresent()) {
+                if (roomRepository.findById(room.roomNumber) != null) {
                     entityManager.getTransaction().rollback();
                 } else {
                     final Room savedRoom = roomRepository.save(room);
@@ -44,7 +48,7 @@ public class RoomManager {
         if (validator.validate(room).size() == 0) {
             try {
                 entityManager.getTransaction().begin();
-                if (roomRepository.findById(room.roomNumber).isPresent()) {
+                if (roomRepository.findById(room.roomNumber) != null) {
                     entityManager.getTransaction().rollback();
                 } else {
                     final Room savedRoom = roomRepository.save(room);
@@ -63,23 +67,18 @@ public class RoomManager {
     public void removeRoom(Room room) {
         if (validator.validate(room).size() == 0) {
             entityManager.getTransaction().begin();
-            roomRepository.findById(room.getRoomNumber()).map(room1 -> {
-                roomRepository.remove(room1);
-                entityManager.getTransaction().commit();
-                return null;
-            }).orElseGet(() -> {
+            Room room1 = roomRepository.findById(room.getRoomNumber());
+            if(room1 == null) {
                 entityManager.getTransaction().rollback();
-                return null;
-            });
+            } else {
+                entityManager.remove(room1);
+                entityManager.getTransaction().commit();
+            }
         }
     }
 
     public Room getRoom(String id) {
-        if (Objects.nonNull(id)) {
-            return roomRepository.findById(id).orElse(null);
-        } else {
-            return null;
-        }
+        return roomRepository.findById(id);
     }
 
     public List<Room> findRooms(Predicate<Room> predicate) {

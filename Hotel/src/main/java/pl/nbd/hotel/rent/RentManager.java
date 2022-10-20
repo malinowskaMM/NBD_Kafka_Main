@@ -56,17 +56,16 @@ public class RentManager {
     void endRoomRent(Rent rent) {
         if (validator.validate(rent).size() == 0) {
             entityManager.getTransaction().begin();
-            rentRepository.findById(rent.getId().toString()).map(rent1 -> {
+            Rent rent1 = rentRepository.findById(rent.getId().toString());
+            if(rent1 != null) {
                 Client client = rent1.getClient();
                 client.setMoneySpent(rent1.client.getMoneySpent() + rent1.rentCost);
                 rentRepository.remove(rent1);
                 checkChangeClientType(client);
                 entityManager.getTransaction().commit();
-                return null;
-            }).orElseGet(() -> {
+            } else {
                 entityManager.getTransaction().rollback();
-                return null;
-            });
+            }
         }
     }
 

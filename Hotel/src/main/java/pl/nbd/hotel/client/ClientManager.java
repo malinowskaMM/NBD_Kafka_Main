@@ -7,6 +7,7 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import pl.nbd.hotel.client.type.ClientType;
 import pl.nbd.hotel.client.type.ClientTypeName;
+import pl.nbd.hotel.room.Room;
 
 import java.util.List;
 import java.util.Objects;
@@ -29,7 +30,7 @@ public class ClientManager {
         if (validator.validate(client).size() == 0) {
             try {
                 entityManager.getTransaction().begin();
-                if (clientRepository.findById(client.personalId).isPresent()) {
+                if (clientRepository.findById(client.personalId) != null) {
                     entityManager.getTransaction().rollback();
                 } else {
                     final Client client1 = clientRepository.save(client);
@@ -48,23 +49,18 @@ public class ClientManager {
     public void unregisterClient(Client client) {
         if (validator.validate(client).size() == 0) {
             entityManager.getTransaction().begin();
-            clientRepository.findById(client.personalId).map(client1 -> {
-                clientRepository.remove(client1);
-                entityManager.getTransaction().commit();
-                return client1;
-            }).orElseGet(() -> {
+            Client client1 = clientRepository.findById(client.personalId);
+            if(client1 == null) {
                 entityManager.getTransaction().rollback();
-                return null;
-            });
+            } else {
+                entityManager.remove(client1);
+                entityManager.getTransaction().commit();
+            }
         }
     }
 
     public Client getClient(String id) {
-        if (Objects.nonNull(id)) {
-            return clientRepository.findById(id).orElse(null);
-        } else {
-            return null;
-        }
+            return clientRepository.findById(id);
     }
 
     public List<Client> findClients(Predicate<Client> predicate) {

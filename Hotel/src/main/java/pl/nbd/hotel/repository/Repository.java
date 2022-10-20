@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 public interface Repository<T> {
-    Optional<T> findById(String id);
+    T findById(String id);
     T save(T object);
     List<T> find(Predicate<T> predicate);
     List<T> findAll();

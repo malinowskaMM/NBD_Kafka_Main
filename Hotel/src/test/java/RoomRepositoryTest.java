@@ -3,10 +3,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import org.junit.Before;
 import org.junit.Test;
-import pl.nbd.hotel.room.BathRoom;
-import pl.nbd.hotel.room.Room;
-import pl.nbd.hotel.room.RoomRepository;
-import pl.nbd.hotel.room.bathType;
+import pl.nbd.hotel.room.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,10 +30,10 @@ public class RoomRepositoryTest {
 
     @Test
     public void shouldFindById() {
-        Optional<Room> room = roomRepository.findById("1");
+        Room room = roomRepository.findById("1");
         String info = "1".concat(" 150.0 2");
-        assertTrue(room.isPresent());
-        assertEquals(info,room.get().getRoomInfo());
+        assertNotNull(room);
+        assertEquals(info,room.getRoomInfo());
     }
 
     @Test
@@ -61,8 +58,9 @@ public class RoomRepositoryTest {
     public void shouldAddClientToRepository() {
         assertEquals(1, roomRepository.getSize());
 
-        Room room = new BathRoom("112", 200.0, 2, bathType.JACUZZI);
-        roomRepository.save(room);
+        RoomManager roomManager = new RoomManager(entityManager);
+        roomManager.addBathRoom("112", 200.0, 2, bathType.JACUZZI);
+
 
         assertEquals(2, roomRepository.getSize());
     }
@@ -71,9 +69,10 @@ public class RoomRepositoryTest {
     public void shouldRemoveClientFromRepository() {
         assertEquals(1, roomRepository.getSize());
 
-        Optional<Room> room = roomRepository.findById("1");
-        assertTrue(room.isPresent());
-        roomRepository.remove(room.get());
+        Room room = roomRepository.findById("1");
+        assertNotNull(room);
+        RoomManager roomManager = new RoomManager(entityManager);
+        roomManager.removeRoom(room);
 
         assertEquals(0, roomRepository.getSize());
     }

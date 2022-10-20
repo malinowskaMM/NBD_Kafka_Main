@@ -2,6 +2,7 @@ package pl.nbd.hotel.rent;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
+import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
 import pl.nbd.hotel.repository.Repository;
@@ -15,11 +16,12 @@ import java.util.function.Predicate;
 @RequiredArgsConstructor
 public class RentRepository implements Repository<Rent> {
 
+    @PersistenceContext
     private final EntityManager entityManager;
 
     @Override
-    public Optional<Rent> findById(String id) {
-        return Optional.of(entityManager.find(Rent.class, id));
+    public Rent findById(String id) {
+        return Optional.of(entityManager.find(Rent.class, id)).orElse(null);
     }
 
     @Override

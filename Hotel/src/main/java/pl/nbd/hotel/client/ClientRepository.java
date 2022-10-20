@@ -13,8 +13,8 @@ public class ClientRepository implements Repository<Client> {
     private final EntityManager entityManager;
 
     @Override
-    public Optional<Client> findById(String id) {
-        return Optional.ofNullable(entityManager.find(Client.class, id));
+    public Client findById(String id) {
+        return entityManager.find(Client.class, id);
     }
 
     @Override

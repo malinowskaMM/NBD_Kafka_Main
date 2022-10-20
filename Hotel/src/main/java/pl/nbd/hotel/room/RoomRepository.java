@@ -14,8 +14,8 @@ public class RoomRepository implements Repository<Room> {
     private final EntityManager entityManager;
 
     @Override
-    public Optional<Room> findById(String id) {
-        return Optional.of(entityManager.find(Room.class, id));
+    public Room findById(String id) {
+        return entityManager.find(Room.class, id);
     }
 
     @Override

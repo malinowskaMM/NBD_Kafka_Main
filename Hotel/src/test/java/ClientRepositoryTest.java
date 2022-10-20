@@ -13,8 +13,7 @@ import pl.nbd.hotel.client.type.ClientTypeName;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ClientRepositoryTest {
     EntityManagerFactory entityManagerFactory;
@@ -43,10 +42,10 @@ public class ClientRepositoryTest {
     @Test
     public void shouldFindById() {
         String id = "11111111111";
-        Optional<Client> client = clientRepository.findById(id);
+        Client client = clientRepository.findById(id);
         String info = id.concat(" imie nazwisko ulica numer miasto 11-111 DIAMOND 15");
-        assertTrue(client.isPresent());
-        assertEquals(info,client.get().getClientInfo());
+        assertNotNull(client);
+        assertEquals(info,client.getClientInfo());
     }
 
     @Test
@@ -87,9 +86,9 @@ public class ClientRepositoryTest {
     public void shouldRemoveClientFromRepository() {
         assertEquals(2,clientRepository.getSize());
 
-        Optional<Client> client = clientRepository.findById("11111111110");
+        Client client = clientRepository.findById("11111111110");
         ClientManager clientManager = new ClientManager(entityManager);
-        clientManager.unregisterClient(client.get());
+        clientManager.unregisterClient(client);
 
         assertEquals(1,clientRepository.getSize());
     }
