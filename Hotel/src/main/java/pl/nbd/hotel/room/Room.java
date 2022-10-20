@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import pl.nbd.hotel.abstractEntity.AbstractEntity;
 
 @Entity
 @Getter
@@ -13,7 +14,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="BATHROOM_TYPE",discriminatorType=DiscriminatorType.STRING)
-public abstract class Room {
+public abstract class Room extends AbstractEntity {
 
     @Id
     @Size(max = 12)

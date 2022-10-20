@@ -22,8 +22,8 @@ public class RoomRepositoryTest {
         roomRepository = new RoomRepository(entityManager);
 
         entityManager.getTransaction().begin();
-        entityManager.createNativeQuery("INSERT INTO room(room_number, price, room_capacity, bathroom_type, bath_type, with_shelf) " +
-                "VALUES ('1', 150.0, 2, 'BATH', 'SMALL', 'FALSE')").executeUpdate();
+        entityManager.createNativeQuery("INSERT INTO room(room_number, price, version, room_capacity, bathroom_type, bath_type, with_shelf) " +
+                "VALUES ('1', 150.0, 1, 2, 'BATH', 'SMALL', 'FALSE')").executeUpdate();
 
         entityManager.getTransaction().commit();
         }

@@ -28,20 +28,22 @@ public class RentManager {
         this.clientRepository = new ClientRepository(entityManager);
     }
 
-    Rent rentRoom(Client client, Room room, LocalDateTime beginTime, LocalDateTime endTime) {
+    public Rent rentRoom(Client client, Room room, LocalDateTime beginTime, LocalDateTime endTime) {
         if (validator.validate(client).size() == 0 && validator.validate(room).size() == 0) {
             if (beginTime.isBefore(endTime)) {
                 try {
                     entityManager.getTransaction().begin();
                     entityManager.lock(room, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
-                    if (rentRepository.getRentsForRoom(room.getRoomNumber(), beginTime, endTime).size() == 0) {
+                    List<Rent> rents = rentRepository.getRentsForRoom(room.getRoomNumber(), beginTime, endTime);
+                    if (rents.size() == 0) {
                         final Rent rent = rentRepository.save(new Rent(UUID.randomUUID(), beginTime, endTime, client, room, client.applyDiscount(room.getPrice())));
                         entityManager.getTransaction().commit();
                         return rent;
                     } else {
                         System.out.println("W tym czasie ten pokoj jest juz zarezerwowany.");
+                        entityManager.getTransaction().rollback();
                     }
-                } catch (RollbackException e) {
+                } catch (IllegalArgumentException e) {
                 entityManager.getTransaction().rollback();
             }
             } else {
@@ -53,7 +55,7 @@ public class RentManager {
         return null;
     }
 
-    void endRoomRent(Rent rent) {
+    public void endRoomRent(Rent rent) {
         if (validator.validate(rent).size() == 0) {
             entityManager.getTransaction().begin();
             Rent rent1 = rentRepository.findById(rent.getId().toString());
@@ -69,19 +71,19 @@ public class RentManager {
         }
     }
 
-    List<Rent> getAllClientRents(Client client) {
+    public List<Rent> getAllClientRents(Client client) {
         return rentRepository.find(rent -> rent.getClient().equals(client));
     }
 
-    List<Rent> getRoomRent(Room room) {
+    public List<Rent> getRoomRent(Room room) {
         return rentRepository.find(rent -> rent.getRoom().equals(room));
     }
 
-    List<Rent> findRents(Predicate<Rent> predicate) {
+    public List<Rent> findRents(Predicate<Rent> predicate) {
         return rentRepository.find(predicate);
     }
 
-    String getAllRentsReport() {
+    public String getAllRentsReport() {
         return rentRepository.getReport();
     }
 

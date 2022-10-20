@@ -6,11 +6,11 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
 import pl.nbd.hotel.repository.Repository;
-import pl.nbd.hotel.room.Room;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 @RequiredArgsConstructor
@@ -21,19 +21,12 @@ public class RentRepository implements Repository<Rent> {
 
     @Override
     public Rent findById(String id) {
-        return Optional.of(entityManager.find(Rent.class, id)).orElse(null);
+        return Optional.of(entityManager.find(Rent.class, UUID.fromString(id))).orElse(null);
     }
 
     @Override
     public Rent save(Rent object) {
-        entityManager.getTransaction().begin();
-        if(object != null) {
-            entityManager.lock(object.getRoom(), LockModeType.OPTIMISTIC_FORCE_INCREMENT);
-            entityManager.persist(object);
-            entityManager.getTransaction().commit();
-        } else {
-            entityManager.getTransaction().rollback();
-        }
+        entityManager.persist(object);
         return object;
     }
 
@@ -70,8 +63,16 @@ public class RentRepository implements Repository<Rent> {
     }
 
     public List<Rent> getRentsForRoom(String roomNumber, LocalDateTime beginTime, LocalDateTime endTime) {
-        TypedQuery<Rent> query = entityManager.createQuery("SELECT c FROM Rent c WHERE c.id = ?1 AND (c.beginTime BETWEEN ?2 AND ?3 OR c.endTime BETWEEN ?2 AND ?3)", Rent.class);
-        return query.setParameter(1, roomNumber).setParameter(2, beginTime).setParameter(3, endTime).getResultList();
+
+        return find(
+                rent -> ((rent.getRoom().getRoomNumber().equals(roomNumber))
+                &&
+                ((rent.getBeginTime().isAfter(beginTime) && rent.getEndTime().isBefore(beginTime))
+                        ||
+                        ((rent.getBeginTime().isAfter(endTime) && rent.getEndTime().isBefore(endTime)))
+                ||
+                        (rent.getBeginTime().isEqual(beginTime) && rent.getEndTime().isEqual(endTime))))
+        );
     }
 
 
