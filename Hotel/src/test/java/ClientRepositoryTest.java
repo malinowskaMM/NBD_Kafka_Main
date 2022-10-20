@@ -10,8 +10,10 @@ import pl.nbd.hotel.client.type.ClientType;
 import pl.nbd.hotel.client.type.ClientTypeName;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ClientRepositoryTest {
     EntityManagerFactory entityManagerFactory;
@@ -25,14 +27,14 @@ public class ClientRepositoryTest {
         clientRepository = new ClientRepository(entityManager);
 
         entityManager.getTransaction().begin();
-        entityManager.createNativeQuery("INSERT INTO clienttype(client_type_name, discount) VALUES ('Diamond', 15);").executeUpdate();
-        entityManager.createNativeQuery("INSERT INTO client (personal_id, version, city_name, postal_code, street, street_number, first_name, last_name, client_type_name) " +
-                "VALUES ('11111111111', 1, 'miasto', '11-111', 'ulica', 'numer', 'imie', 'nazwisko', 'Diamond');").executeUpdate();
+        entityManager.createNativeQuery("INSERT INTO clienttype(client_type_name, discount) VALUES ('DIAMOND', 15);").executeUpdate();
+        entityManager.createNativeQuery("INSERT INTO client (personal_id, version, city_name, postal_code, street, street_number, first_name, last_name, client_type_name, money_spent) " +
+                "VALUES ('11111111111', 1, 'miasto', '11-111', 'ulica', 'numer', 'imie', 'nazwisko', 'DIAMOND', 0.0);").executeUpdate();
         entityManager.getTransaction().commit();
 
         entityManager.getTransaction().begin();
-        entityManager.createNativeQuery("INSERT INTO client (personal_id, version, city_name, postal_code, street, street_number, first_name, last_name, client_type_name) " +
-                "VALUES ('11111111110', 1, 'miastoDuze', '12-211', 'ulicaDluga', 'numerN', 'xyz', 'zyx', 'Diamond');").executeUpdate();
+        entityManager.createNativeQuery("INSERT INTO client (personal_id, version, city_name, postal_code, street, street_number, first_name, last_name, client_type_name, money_spent) " +
+                "VALUES ('11111111110', 1, 'miastoDuze', '12-211', 'ulicaDluga', 'numerN', 'xyz', 'zyx', 'DIAMOND', 0.0);").executeUpdate();
         entityManager.getTransaction().commit();
 
     }
@@ -40,9 +42,10 @@ public class ClientRepositoryTest {
     @Test
     public void shouldFindById() {
         String id = "11111111111";
-        Client client = clientRepository.findById(id);
-        String info = id.concat(" imie nazwisko ulica numer miasto 11-111 Diamond 15");
-        assertEquals(info,client.getClientInfo());
+        Optional<Client> client = clientRepository.findById(id);
+        String info = id.concat(" imie nazwisko ulica numer miasto 11-111 DIAMOND 15");
+        assertTrue(client.isPresent());
+        assertEquals(info,client.get().getClientInfo());
     }
 
     @Test
@@ -67,13 +70,13 @@ public class ClientRepositoryTest {
     public void shouldAddClientToRepository() {
         assertEquals(2,clientRepository.getSize());
 
-        ClientType clientType = new ClientType(ClientTypeName.Sapphire, 35);
+        ClientType clientType = new ClientType(ClientTypeName.SAPPHIRE, 35);
 
         entityManager.getTransaction().begin();
         entityManager.persist(clientType);
         entityManager.getTransaction().commit();
 
-        Client client = new Client("00230908071", "Jan", "Nowak", new Address("Nowa", "3a", "Warszawa", "00-010"), clientType);
+        Client client = new Client("00230908071", "Jan", "Nowak", new Address("Nowa", "3a", "Warszawa", "00-010"), 0.0, clientType);
         clientRepository.save(client);
 
         assertEquals(3,clientRepository.getSize());
@@ -83,8 +86,9 @@ public class ClientRepositoryTest {
     public void shouldRemoveClientFromRepository() {
         assertEquals(2,clientRepository.getSize());
 
-        Client client = clientRepository.findById("11111111110");
-        clientRepository.remove(client);
+        Optional<Client> client = clientRepository.findById("11111111110");
+        assertTrue(client.isPresent());
+        clientRepository.remove(client.get());
 
         assertEquals(1,clientRepository.getSize());
     }

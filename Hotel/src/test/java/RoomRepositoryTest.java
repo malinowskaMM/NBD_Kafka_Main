@@ -9,8 +9,9 @@ import pl.nbd.hotel.room.RoomRepository;
 import pl.nbd.hotel.room.bathType;
 
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class RoomRepositoryTest {
     EntityManagerFactory entityManagerFactory;
@@ -32,9 +33,10 @@ public class RoomRepositoryTest {
 
     @Test
     public void shouldFindById() {
-        Room room = roomRepository.findById("1");
+        Optional<Room> room = roomRepository.findById("1");
         String info = "1".concat(" 150.0 2");
-        assertEquals(info,room.getRoomInfo());
+        assertTrue(room.isPresent());
+        assertEquals(info,room.get().getRoomInfo());
     }
 
     @Test
@@ -69,8 +71,9 @@ public class RoomRepositoryTest {
     public void shouldRemoveClientFromRepository() {
         assertEquals(1, roomRepository.getSize());
 
-        Room room = roomRepository.findById("1");
-        roomRepository.remove(room);
+        Optional<Room> room = roomRepository.findById("1");
+        assertTrue(room.isPresent());
+        roomRepository.remove(room.get());
 
         assertEquals(0, roomRepository.getSize());
     }
