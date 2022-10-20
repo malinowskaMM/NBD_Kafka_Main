@@ -34,7 +34,7 @@ public class Client extends AbstractEntity {
     @Setter
     @NotNull
     @PositiveOrZero
-    @Column(name = "MONEY_SPENT", nullable = false, columnDefinition = "INTEGER CHECK (MONEY_SPENT >= 0)")
+    @Column(name = "MONEY_SPENT", nullable = false, columnDefinition = "FLOAT CHECK (MONEY_SPENT >= 0)")
     Double moneySpent;
 
     @ManyToOne

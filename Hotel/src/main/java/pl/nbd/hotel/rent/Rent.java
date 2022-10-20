@@ -30,7 +30,7 @@ public class Rent extends AbstractEntity {
     @Column(name = "END_TIME", nullable = false, columnDefinition = "TIMESTAMP CHECK (END_TIME > BEGIN_TIME)")
     LocalDateTime endTime;
 
-    @Column(name = "RENT_COST", nullable = false, columnDefinition = "DOUBLE CHECK (RENT_COST >= 0)")
+    @Column(name = "RENT_COST", nullable = false, columnDefinition = "FLOAT CHECK (RENT_COST >= 0)")
     @PositiveOrZero
     @NotNull
     Double rentCost;
