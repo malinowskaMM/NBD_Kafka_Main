@@ -2,12 +2,13 @@ package pl.nbd.hotel.rent;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
-import jakarta.persistence.RollbackException;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pl.nbd.hotel.client.Client;
 import pl.nbd.hotel.client.ClientRepository;
-import pl.nbd.hotel.client.type.ClientType;
 import pl.nbd.hotel.client.type.ClientTypeName;
 import pl.nbd.hotel.room.Room;
 
@@ -17,6 +18,8 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 public class RentManager {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Slf4j.class);
     private final RentRepository rentRepository;
     private final EntityManager entityManager;
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
@@ -34,23 +37,23 @@ public class RentManager {
                 try {
                     entityManager.getTransaction().begin();
                     entityManager.lock(room, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
-                    List<Rent> rents = rentRepository.getRentsForRoom(room.getRoomNumber(), beginTime, endTime);
+                    final List<Rent> rents = rentRepository.getRentsForRoom(room.getRoomNumber(), beginTime, endTime);
                     if (rents.size() == 0) {
                         final Rent rent = rentRepository.save(new Rent(UUID.randomUUID(), beginTime, endTime, client, room, client.applyDiscount(room.getPrice())));
                         entityManager.getTransaction().commit();
                         return rent;
                     } else {
-                        System.out.println("W tym czasie ten pokoj jest juz zarezerwowany.");
+                        LOGGER.warn("Room {} is already reserved", room.getRoomNumber());
                         entityManager.getTransaction().rollback();
                     }
                 } catch (IllegalArgumentException e) {
                 entityManager.getTransaction().rollback();
             }
             } else {
-                System.out.printf("Czas poczatkowy rezerwacji %s nie jest wczesniejszy niz czas koncowy rezerwacji %s%n", beginTime, endTime);
+                LOGGER.warn("Begin time of reservation {} is not earlier than end time of reservation {}", beginTime, endTime);
             }
         } else {
-            System.out.println("Podane parametry nie spelniaja zalozen!");
+            LOGGER.error("Parameters validation failed");
         }
         return null;
     }
@@ -58,17 +61,20 @@ public class RentManager {
     public void endRoomRent(Rent rent) {
         if (validator.validate(rent).size() == 0) {
             entityManager.getTransaction().begin();
-            Rent rent1 = rentRepository.findById(rent.getId().toString());
+            final Rent rent1 = rentRepository.findById(rent.getId().toString());
             if(rent1 != null) {
-                Client client = rent1.getClient();
+                final Client client = rent1.getClient();
                 client.setMoneySpent(rent1.client.getMoneySpent() + rent1.rentCost);
                 entityManager.lock(rent1.getRoom(), LockModeType.NONE);
                 rentRepository.remove(rent1);
                 checkChangeClientType(client);
                 entityManager.getTransaction().commit();
             } else {
+                LOGGER.warn("Rent {} does not exist in the database", rent.getId());
                 entityManager.getTransaction().rollback();
             }
+        } else {
+            LOGGER.error("Rent {} validation failed", rent.getId());
         }
     }
 
@@ -106,6 +112,6 @@ public class RentManager {
                 client.getClientType().setClientTypeName(ClientTypeName.GOLD);
             }
         }
-        clientRepository.save(client);//sprawdzic czy to nie wyrzuci bledu.
+        clientRepository.save(client);
     }
 }

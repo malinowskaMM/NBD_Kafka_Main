@@ -17,10 +17,8 @@ import pl.nbd.hotel.room.bathType;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.UUID;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -87,7 +85,7 @@ public class RentRepositoryTest {
     }
 
     @Test
-    public void shouldAddClientToRepository() {
+    public void shouldAddRentToRepository() {
         assertEquals(2, rentRepository.getSize());
         Room roomExample2 = new ShowerRoom("3", 100.0, 1, false);
         Client clientExample2 = new Client("11010000000","imie2", "nazwisko2", new Address("ulica2", "numer2", "miasto2", "00-111"), 0.0, new ClientType(ClientTypeName.DIAMOND, 15));
@@ -103,7 +101,7 @@ public class RentRepositoryTest {
     }
 
     @Test
-    public void shouldRemoveClientFromRepository() {
+    public void shouldRemoveRentFromRepository() {
         assertEquals(2, rentRepository.getSize());
 
         Rent rent = rentRepository.findById("c9ba0eae-5084-11ed-bdc3-0242ac120002");

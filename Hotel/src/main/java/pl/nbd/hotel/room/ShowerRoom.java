@@ -26,9 +26,4 @@ public class ShowerRoom extends Room {
     public String getRoomInfo() {
         return super.getRoomInfo().concat("with shelf ").concat(String.valueOf(withShelf));
     }
-
-//    public float getActualRentalPrice() {
-//
-//    }
-
 }

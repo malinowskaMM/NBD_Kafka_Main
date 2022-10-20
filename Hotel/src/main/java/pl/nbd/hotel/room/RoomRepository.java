@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import pl.nbd.hotel.repository.Repository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 @RequiredArgsConstructor
@@ -36,7 +35,7 @@ public class RoomRepository implements Repository<Room> {
 
     @Override
     public String getReport() {
-        StringBuilder description = new StringBuilder();
+        final StringBuilder description = new StringBuilder();
         for (Room r: findAll()) {
             description.append(r.getRoomInfo());
             description.append(", ");

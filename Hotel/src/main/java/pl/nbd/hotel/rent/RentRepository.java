@@ -1,7 +1,6 @@
 package pl.nbd.hotel.rent;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.LockModeType;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
@@ -32,19 +31,19 @@ public class RentRepository implements Repository<Rent> {
 
     @Override
     public List<Rent> find(Predicate<Rent> predicate) {
-        List<Rent> rents = findAll();
+        final List<Rent> rents = findAll();
         return rents.stream().filter(predicate).toList();
     }
 
     @Override
     public List<Rent> findAll() {
-        TypedQuery<Rent> query = entityManager.createQuery("SELECT c FROM Rent c", Rent.class);
+        final TypedQuery<Rent> query = entityManager.createQuery("SELECT c FROM Rent c", Rent.class);
         return query.getResultList();
     }
 
     @Override
     public String getReport() {
-        StringBuilder description = new StringBuilder();
+        final StringBuilder description = new StringBuilder();
         for (Rent r: findAll()) {
             description.append(r.getRentInfo());
             description.append(", ");

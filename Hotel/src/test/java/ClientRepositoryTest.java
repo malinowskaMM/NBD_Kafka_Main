@@ -11,7 +11,6 @@ import pl.nbd.hotel.client.type.ClientType;
 import pl.nbd.hotel.client.type.ClientTypeName;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.Assert.*;
 

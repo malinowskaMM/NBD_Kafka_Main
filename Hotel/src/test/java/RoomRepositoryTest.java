@@ -6,7 +6,6 @@ import org.junit.Test;
 import pl.nbd.hotel.room.*;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -37,13 +36,13 @@ public class RoomRepositoryTest {
     }
 
     @Test
-    public void shouldFindByFirstNameEqualsImie() {
+    public void shouldFindByRoomNumberEquals1() {
         List<Room> rooms = roomRepository.find(room -> room.getRoomNumber().equals("1"));
         assertEquals(1,rooms.size());
     }
 
     @Test
-    public void shouldNotFindByFirstNameEqualsName() {
+    public void shouldNotFindByRoomNumberEquals0() {
         List<Room> rooms = roomRepository.find(room -> room.getRoomNumber().equals("0"));
         assertEquals(0,rooms.size());
     }
@@ -55,7 +54,7 @@ public class RoomRepositoryTest {
     }
 
     @Test
-    public void shouldAddClientToRepository() {
+    public void shouldAddRoomToRepository() {
         assertEquals(1, roomRepository.getSize());
 
         RoomManager roomManager = new RoomManager(entityManager);
@@ -66,7 +65,7 @@ public class RoomRepositoryTest {
     }
 
     @Test
-    public void shouldRemoveClientFromRepository() {
+    public void shouldRemoveRoomFromRepository() {
         assertEquals(1, roomRepository.getSize());
 
         Room room = roomRepository.findById("1");

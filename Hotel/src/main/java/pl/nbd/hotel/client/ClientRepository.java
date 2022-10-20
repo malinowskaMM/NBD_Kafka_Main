@@ -35,7 +35,7 @@ public class ClientRepository implements Repository<Client> {
 
     @Override
     public String getReport() {
-        StringBuilder description = new StringBuilder();
+        final StringBuilder description = new StringBuilder();
         for (Client c: findAll()) {
             description.append(c.getClientInfo());
             description.append(", ");
