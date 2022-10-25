@@ -1,7 +1,11 @@
 package pl.nbd.hotel.client;
 
-import jakarta.persistence.EntityManager;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Filters;
 import lombok.RequiredArgsConstructor;
+import org.bson.conversions.Bson;
 import pl.nbd.hotel.repository.Repository;
 
 import java.util.*;
@@ -10,16 +14,18 @@ import java.util.function.Predicate;
 @RequiredArgsConstructor
 public class ClientRepository implements Repository<Client> {
 
-    private final EntityManager entityManager;
+    private final MongoCollection<Client> clientMongoCollection;
 
     @Override
     public Client findById(String id) {
-        return entityManager.find(Client.class, id);
+        Bson filter = Filters.eq("personalId", id);
+        FindIterable<Client> clients = clientMongoCollection.find(filter);
+        return clients.first();
     }
 
     @Override
     public Client save(Client client) {
-        entityManager.persist(client);
+        clientMongoCollection.insertOne(client);
         return client;
     }
 
@@ -30,7 +36,7 @@ public class ClientRepository implements Repository<Client> {
 
     @Override
     public List<Client> findAll() {
-        return entityManager.createQuery("SELECT c FROM Client c", Client.class).getResultList();
+        return clientMongoCollection.aggregate(List.of(Aggregates.replaceRoot("$client")),Client.class).into(new ArrayList<>());
     }
 
     @Override
@@ -50,6 +56,7 @@ public class ClientRepository implements Repository<Client> {
 
     @Override
     public void remove(Client object) {
-        entityManager.remove(object);
+        Bson filter = Filters.eq("personalId", object.getPersonalId());
+        clientMongoCollection.deleteOne(filter);
     }
 }

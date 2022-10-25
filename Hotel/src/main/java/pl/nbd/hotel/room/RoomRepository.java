@@ -1,25 +1,32 @@
 package pl.nbd.hotel.room;
 
-import jakarta.persistence.EntityManager;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Filters;
 import lombok.RequiredArgsConstructor;
+import org.bson.conversions.Bson;
 import pl.nbd.hotel.repository.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
 @RequiredArgsConstructor
 public class RoomRepository implements Repository<Room> {
 
-    private final EntityManager entityManager;
+    private final MongoCollection<Room> roomMongoCollection;
 
     @Override
     public Room findById(String id) {
-        return entityManager.find(Room.class, id);
+        Bson filter = Filters.eq("personalId", id);
+        FindIterable<Room> rooms = roomMongoCollection.find(filter);
+        return rooms.first();
     }
 
     @Override
     public Room save(Room room) {
-        entityManager.persist(room);
+        roomMongoCollection.insertOne(room);
         return room;
     }
 
@@ -30,7 +37,7 @@ public class RoomRepository implements Repository<Room> {
 
     @Override
     public List<Room> findAll() {
-        return entityManager.createQuery("SELECT c FROM Room c", Room.class).getResultList();
+        return roomMongoCollection.aggregate(List.of(Aggregates.replaceRoot("$room")),Room.class).into(new ArrayList<>());
     }
 
     @Override
@@ -50,6 +57,7 @@ public class RoomRepository implements Repository<Room> {
 
     @Override
     public void remove(Room object) {
-        entityManager.remove(object);
+        Bson filter = Filters.eq("roomNumber", object.roomNumber);
+        roomMongoCollection.deleteOne(filter);
     }
 }

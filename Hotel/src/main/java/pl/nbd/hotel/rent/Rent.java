@@ -1,53 +1,49 @@
 package pl.nbd.hotel.rent;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
+import org.bson.codecs.pojo.annotations.BsonCreator;
+import org.bson.codecs.pojo.annotations.BsonProperty;
 import pl.nbd.hotel.abstractEntity.AbstractEntity;
 import pl.nbd.hotel.client.Client;
 import pl.nbd.hotel.room.Room;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Rent extends AbstractEntity {
 
-    @Id
-    @NotNull
-    @Column(name = "ID")
+    @BsonProperty("id")
     UUID id;
 
-    @NotNull
-    @Column(name = "BEGIN_TIME", nullable = false, columnDefinition = "TIMESTAMP CHECK (END_TIME > BEGIN_TIME)")
+    @BsonProperty("beginTime")
     LocalDateTime beginTime;
 
-    @NotNull
-    @Column(name = "END_TIME", nullable = false, columnDefinition = "TIMESTAMP CHECK (END_TIME > BEGIN_TIME)")
+    @BsonProperty("endTime")
     LocalDateTime endTime;
 
-    @Column(name = "RENT_COST", nullable = false, columnDefinition = "FLOAT CHECK (RENT_COST >= 0)")
-    @PositiveOrZero
-    @NotNull
+    @BsonProperty("rentCost")
     Double rentCost;
 
-    @ManyToOne
-    @JoinColumn(name = "PERSONAL_ID", nullable = false)
+    @BsonProperty("client")
     Client client;
 
-    @ManyToOne
-    @JoinColumn(name = "ROOM_NUMBER", nullable = false)
+    @BsonProperty("room")
     Room room;
 
     public String getRentInfo() {
         return id.toString().concat(" ").concat(beginTime.toString()).concat(" ").concat(endTime.toString()).concat(" ").concat(rentCost.toString()).concat(" ").concat(client.getClientInfo()).concat(" ").concat(room.getRoomInfo());
     }
 
-    public Rent(UUID id, LocalDateTime beginTime, LocalDateTime endTime, Client client, Room room, Double rentCost) {
+    @BsonCreator
+    public Rent(@BsonProperty("_id") UUID uuid,
+                @BsonProperty("id") UUID id,
+                @BsonProperty("beginTime") LocalDateTime beginTime,
+                @BsonProperty("endTime") LocalDateTime endTime,
+                @BsonProperty("client") Client client,
+                @BsonProperty("room") Room room,
+                @BsonProperty("rentCost") Double rentCost) {
+        super(uuid);
         this.id = id;
         this.beginTime = beginTime;
         this.endTime = endTime;

@@ -1,24 +1,25 @@
 package pl.nbd.hotel.room;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import org.bson.codecs.pojo.annotations.BsonCreator;
+import org.bson.codecs.pojo.annotations.BsonProperty;
 
-@Entity
-@DiscriminatorValue("BATH")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+import java.util.UUID;
+
+@Getter
 public class BathRoom extends Room {
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "BATH_TYPE", length = 20)
-    bathType bathType;
-
-    public BathRoom(@Size(max = 12) String roomNumber, @NotNull @PositiveOrZero Double price, @NotNull @Positive Integer roomCapacity, pl.nbd.hotel.room.bathType bathType) {
-        super(roomNumber, price, roomCapacity);
+    @BsonCreator
+    public BathRoom( @BsonProperty("_id") UUID uuid,
+                       @BsonProperty("roomNumber") String roomNumber,
+                       @BsonProperty("price") Double price,
+                       @BsonProperty("roomCapacity") Integer roomCapacity,
+                       @BsonProperty("bathType") bathType bathType) {
+        super(uuid, roomNumber, price, roomCapacity);
         this.bathType = bathType;
     }
+
+    @BsonProperty("bathType")
+    bathType bathType;
+
 }

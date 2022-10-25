@@ -1,34 +1,34 @@
 package pl.nbd.hotel.room;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.bson.codecs.pojo.annotations.BsonCreator;
+import org.bson.codecs.pojo.annotations.BsonProperty;
 import pl.nbd.hotel.abstractEntity.AbstractEntity;
 
-@Entity
+import java.util.UUID;
+
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="BATHROOM_TYPE",discriminatorType=DiscriminatorType.STRING)
 public abstract class Room extends AbstractEntity {
 
-    @Id
-    @Size(max = 12)
-    @Column(name = "ROOM_NUMBER", columnDefinition = "VARCHAR(12)")
+    @BsonCreator
+    public Room(@BsonProperty("_id") UUID uuid,
+                @BsonProperty("roomNumber") String roomNumber,
+                @BsonProperty("price") Double price,
+                @BsonProperty("roomCapacity") Integer roomCapacity
+                ) {
+        super(uuid);
+        this.roomNumber = roomNumber;
+        this.price = price;
+        this.roomCapacity = roomCapacity;
+    }
+
+    @BsonProperty("roomNumber")
     String roomNumber;
 
-    @NotNull
-    @PositiveOrZero
-    @Column(name = "PRICE", nullable = false, columnDefinition = "DOUBLE PRECISION CHECK (PRICE >= 0)")
+    @BsonProperty("price")
     Double price;
 
-    @NotNull
-    @Positive
-    @Column(name = "ROOM_CAPACITY", nullable = false, columnDefinition = "INTEGER CHECK (ROOM_CAPACITY > 0)")
+    @BsonProperty("roomCapacity")
     Integer roomCapacity;
 
     public String getRoomInfo() {

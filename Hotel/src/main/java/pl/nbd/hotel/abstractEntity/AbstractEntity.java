@@ -1,16 +1,17 @@
 package pl.nbd.hotel.abstractEntity;
 
-import jakarta.persistence.Embedded;
-import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Version;
-import jakarta.validation.constraints.NotNull;
+import org.bson.codecs.pojo.annotations.BsonProperty;
 
 import java.io.Serializable;
 import java.util.UUID;
 
-@MappedSuperclass
 public abstract class AbstractEntity implements Serializable {
 
-    @Version
-    private long version;
+    @BsonProperty("_id")
+    private final UUID uuid;
+
+    public AbstractEntity(UUID uuid) {
+        this.uuid = uuid;
+    }
 }

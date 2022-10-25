@@ -1,31 +1,33 @@
 package pl.nbd.hotel.rent;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Filters;
 import lombok.RequiredArgsConstructor;
+import org.bson.conversions.Bson;
 import pl.nbd.hotel.repository.Repository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 import java.util.function.Predicate;
 
 @RequiredArgsConstructor
 public class RentRepository implements Repository<Rent> {
 
-    @PersistenceContext
-    private final EntityManager entityManager;
+    private final MongoCollection<Rent> rentMongoCollection;
 
     @Override
     public Rent findById(String id) {
-        return Optional.of(entityManager.find(Rent.class, UUID.fromString(id))).orElse(null);
+        Bson filter = Filters.eq("id", id);
+        FindIterable<Rent> rents = rentMongoCollection.find(filter);
+        return rents.first();
     }
 
     @Override
     public Rent save(Rent object) {
-        entityManager.persist(object);
+        rentMongoCollection.insertOne(object);
         return object;
     }
 
@@ -37,8 +39,7 @@ public class RentRepository implements Repository<Rent> {
 
     @Override
     public List<Rent> findAll() {
-        final TypedQuery<Rent> query = entityManager.createQuery("SELECT c FROM Rent c", Rent.class);
-        return query.getResultList();
+        return rentMongoCollection.aggregate(List.of(Aggregates.replaceRoot("$rent")),Rent.class).into(new ArrayList<>());
     }
 
     @Override
@@ -58,7 +59,8 @@ public class RentRepository implements Repository<Rent> {
 
     @Override
     public void remove(Rent object) {
-        entityManager.remove(object);
+        Bson filter = Filters.eq("id", object.getId());
+        rentMongoCollection.deleteOne(filter);
     }
 
     public List<Rent> getRentsForRoom(String roomNumber, LocalDateTime beginTime, LocalDateTime endTime) {

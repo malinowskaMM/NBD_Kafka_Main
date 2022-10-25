@@ -1,44 +1,49 @@
 package pl.nbd.hotel.client;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.Getter;
+import org.bson.codecs.pojo.annotations.BsonCreator;
+import org.bson.codecs.pojo.annotations.BsonProperty;
 import pl.nbd.hotel.abstractEntity.AbstractEntity;
 import pl.nbd.hotel.client.type.ClientType;
 
-@Entity
+import java.util.UUID;
+
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Client extends AbstractEntity {
 
-    @Id
-    @Size(min = 11, max = 11)
-    @Column(name = "PERSONAL_ID", length = 11)
+    @BsonCreator
+    public Client(@BsonProperty("_id") UUID uuid,
+                  @BsonProperty("personalId") String personalId,
+                  @BsonProperty("firstName") String firstName,
+                  @BsonProperty("lastName") String lastName,
+                  @BsonProperty("address") Address address,
+                  @BsonProperty("moneySpent") Double moneySpent,
+                  @BsonProperty("clientType") ClientType clientType
+                  ) {
+        super(uuid);
+        this.personalId = personalId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.address = address;
+        this.moneySpent = moneySpent;
+        this.clientType = clientType;
+    }
+    @BsonProperty("personalId")
     String personalId;
 
-    @NotNull
-    @Size(max = 35)
-    @Column(name = "FIRST_NAME", nullable = false, length = 35)
+    @BsonProperty("firstName")
     String firstName;
 
-    @NotNull
-    @Size(max = 35)
-    @Column(name = "LAST_NAME", nullable = false, length = 35)
+    @BsonProperty("lastName")
     String lastName;
 
+    @BsonProperty("address")
     Address address;
 
-    @Setter
-    @NotNull
-    @PositiveOrZero
-    @Column(name = "MONEY_SPENT", nullable = false, columnDefinition = "FLOAT CHECK (MONEY_SPENT >= 0)")
+    @BsonProperty("moneySpent")
     Double moneySpent;
 
-    @ManyToOne
-    @JoinColumn(name = "CLIENT_TYPE_NAME", nullable = false)
+    @BsonProperty("clientType")
     ClientType clientType;
 
     public String getClientInfo() {
