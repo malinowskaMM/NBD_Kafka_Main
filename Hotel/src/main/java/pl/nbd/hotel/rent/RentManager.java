@@ -1,5 +1,6 @@
 package pl.nbd.hotel.rent;
 
+import com.mongodb.client.MongoCollection;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.validation.Validation;
@@ -20,35 +21,25 @@ import java.util.function.Predicate;
 public class RentManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Slf4j.class);
-    private final RentRepository rentRepository;
-    private final EntityManager entityManager;
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
     private final ClientRepository clientRepository;
+    private final RentRepository rentRepository;
 
-    public RentManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-        this.rentRepository = new RentRepository(entityManager);
-        this.clientRepository = new ClientRepository(entityManager);
+    public RentManager(MongoCollection<Rent> rentMongoCollection, MongoCollection<Client> clientMongoCollection) {
+        this.rentRepository = new RentRepository(rentMongoCollection);
+        this.clientRepository = new ClientRepository(clientMongoCollection);
     }
 
     public Rent rentRoom(Client client, Room room, LocalDateTime beginTime, LocalDateTime endTime) {
         if (validator.validate(client).size() == 0 && validator.validate(room).size() == 0) {
             if (beginTime.isBefore(endTime)) {
-                try {
-                    entityManager.getTransaction().begin();
-                    entityManager.lock(room, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
                     final List<Rent> rents = rentRepository.getRentsForRoom(room.getRoomNumber(), beginTime, endTime);
                     if (rents.size() == 0) {
-                        final Rent rent = rentRepository.save(new Rent(UUID.randomUUID(), beginTime, endTime, client, room, client.applyDiscount(room.getPrice())));
-                        entityManager.getTransaction().commit();
+                        final Rent rent = rentRepository.save(new Rent(UUID.randomUUID(), UUID.randomUUID(), beginTime, endTime, client, room, client.applyDiscount(room.getPrice())));
                         return rent;
                     } else {
                         LOGGER.warn("Room {} is already reserved", room.getRoomNumber());
-                        entityManager.getTransaction().rollback();
                     }
-                } catch (IllegalArgumentException e) {
-                entityManager.getTransaction().rollback();
-            }
             } else {
                 LOGGER.warn("Begin time of reservation {} is not earlier than end time of reservation {}", beginTime, endTime);
             }
@@ -60,17 +51,14 @@ public class RentManager {
 
     public void endRoomRent(Rent rent) {
         if (validator.validate(rent).size() == 0) {
-            entityManager.getTransaction().begin();
             final Rent rent1 = rentRepository.findById(rent.getId().toString());
             if(rent1 != null) {
                 final Client client = rent1.getClient();
                 client.setMoneySpent(rent1.client.getMoneySpent() + rent1.rentCost);
                 rentRepository.remove(rent1);
                 checkChangeClientType(client);
-                entityManager.getTransaction().commit();
             } else {
                 LOGGER.warn("Rent {} does not exist in the database", rent.getId());
-                entityManager.getTransaction().rollback();
             }
         } else {
             LOGGER.error("Rent {} validation failed", rent.getId());

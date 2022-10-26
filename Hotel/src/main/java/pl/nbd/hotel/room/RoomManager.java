@@ -1,5 +1,6 @@
 package pl.nbd.hotel.room;
 
+import com.mongodb.client.MongoCollection;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.RollbackException;
@@ -10,37 +11,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 public class RoomManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(Slf4j.class);
-    @PersistenceContext
-    private final EntityManager entityManager;
     private final RoomRepository roomRepository;
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
-    public RoomManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-        this.roomRepository = new RoomRepository(entityManager);
+    public RoomManager(MongoCollection<Room> roomMongoCollection) {
+        this.roomRepository = new RoomRepository(roomMongoCollection);
     }
 
     public Room addShowerRoom(String roomNumber, Double basePrice, int roomCapacity, boolean withShelf) {
-        final Room room = new ShowerRoom(roomNumber, basePrice, roomCapacity, withShelf);
+        final Room room = new ShowerRoom(UUID.randomUUID(),roomNumber, basePrice, roomCapacity, withShelf);
         if (validator.validate(room).size() == 0) {
-            try {
-                entityManager.getTransaction().begin();
-                if (roomRepository.findById(room.roomNumber) != null) {
-                    LOGGER.warn("Room {} already exists in the database", room.getRoomNumber());
-                    entityManager.getTransaction().rollback();
-                } else {
-                    final Room savedRoom = roomRepository.save(room);
-                    entityManager.getTransaction().commit();
-                    return savedRoom;
+            if (roomRepository.findById(room.roomNumber) != null) {
+                LOGGER.warn("Room {} already exists in the database", room.getRoomNumber());
+            } else {
+                final Room savedRoom = roomRepository.save(room);
+                return savedRoom;
                 }
-            } catch (RollbackException e) {
-                LOGGER.error("Transaction failed", e);
-                entityManager.getTransaction().rollback();
-            }
         } else {
             LOGGER.warn("Room {} validation failed", room.getRoomNumber());
         }
@@ -48,22 +39,14 @@ public class RoomManager {
     }
 
     public Room addBathRoom(String roomNumber, Double basePrice, int roomCapacity, bathType bathType){
-        final Room room = new BathRoom(roomNumber, basePrice, roomCapacity, bathType);
+        final Room room = new BathRoom(UUID.randomUUID(), roomNumber, basePrice, roomCapacity, bathType);
         if (validator.validate(room).size() == 0) {
-            try {
-                entityManager.getTransaction().begin();
                 if (roomRepository.findById(room.roomNumber) != null) {
                     LOGGER.warn("Room {} already exists in the database", room.getRoomNumber());
-                    entityManager.getTransaction().rollback();
                 } else {
                     final Room savedRoom = roomRepository.save(room);
-                    entityManager.getTransaction().commit();
                     return savedRoom;
                 }
-            } catch (RollbackException e) {
-                LOGGER.error("Transaction failed", e);
-                entityManager.getTransaction().rollback();
-            }
         } else {
             LOGGER.warn("Room {} validation failed", room.getRoomNumber());
         }
@@ -72,14 +55,11 @@ public class RoomManager {
 
     public void removeRoom(Room room) {
         if (validator.validate(room).size() == 0) {
-            entityManager.getTransaction().begin();
             final Room room1 = roomRepository.findById(room.getRoomNumber());
             if(room1 == null) {
                 LOGGER.warn("Room {} does not exist in the database", room.getRoomNumber());
-                entityManager.getTransaction().rollback();
             } else {
-                entityManager.remove(room1);
-                entityManager.getTransaction().commit();
+                roomRepository.remove(room1);
             }
         } else {
             LOGGER.warn("Room {} validation failed", room.getRoomNumber());

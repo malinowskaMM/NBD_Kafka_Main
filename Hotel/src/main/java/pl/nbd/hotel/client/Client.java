@@ -54,4 +54,7 @@ public class Client extends AbstractEntity {
         return clientType.applyDiscount(price);
     }
 
+    public void setMoneySpent(double v) {
+        this.moneySpent = v;
+    }
 }
