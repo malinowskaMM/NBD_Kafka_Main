@@ -1,6 +1,7 @@
 version: '3.8'
 services:
   mongo:
+    build: .
     image: mongocustom:1
     container_name: mongodb
     hostname: mongodb
