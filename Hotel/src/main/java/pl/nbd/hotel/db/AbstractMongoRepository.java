@@ -25,7 +25,7 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
             .build());
 
     private MongoClient mongoClient;
-    private MongoDatabase mongoDatabase;
+    private MongoDatabase mongoDatabase; //rentACarDB
 
     private void initDbConnection() {
         MongoClientSettings settings = MongoClientSettings.builder()
@@ -33,7 +33,7 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
                 .applyConnectionString(connectionString)
                 .uuidRepresentation(UuidRepresentation.STANDARD)
                 .codecRegistry(CodecRegistries.fromRegistries(
-                        //CodecRegistries.fromProviders(new UniqueIdCodecProvider()),
+                        CodecRegistries.fromProviders(new UniqueIdCodecProvider()),
                         MongoClientSettings.getDefaultCodecRegistry(),
                         pojoCodecRegistry
                 ))
