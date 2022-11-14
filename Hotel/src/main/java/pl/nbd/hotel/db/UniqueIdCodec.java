@@ -9,7 +9,7 @@ import org.bson.codecs.configuration.CodecRegistry;
 
 import java.util.UUID;
 
-public class UniqueIdCodec implements Codec<UUID> {
+public class UniqueIdCodec implements Codec<UniqueId> {
 
     private Codec<UUID> uuidCodec;
 
@@ -18,17 +18,18 @@ public class UniqueIdCodec implements Codec<UUID> {
     }
 
     @Override
-    public UUID decode(BsonReader bsonReader, DecoderContext decoderContext) {
-        return uuidCodec.decode(bsonReader, decoderContext);
+    public UniqueId decode(BsonReader bsonReader, DecoderContext decoderContext) {
+        UUID uuid = uuidCodec.decode(bsonReader, decoderContext);
+        return new UniqueId(uuid);
     }
 
     @Override
-    public void encode(BsonWriter bsonWriter, UUID uuid, EncoderContext encoderContext) {
-        uuidCodec.encode(bsonWriter, uuid, encoderContext);
+    public void encode(BsonWriter bsonWriter, UniqueId uuid, EncoderContext encoderContext) {
+        uuidCodec.encode(bsonWriter, uuid.getUuid(), encoderContext);
     }
 
     @Override
-    public Class<UUID> getEncoderClass() {
-        return UUID.class;
+    public Class<UniqueId> getEncoderClass() {
+        return UniqueId.class;
     }
 }

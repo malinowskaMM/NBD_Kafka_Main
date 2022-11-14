@@ -5,6 +5,7 @@ import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import pl.nbd.hotel.abstractEntity.AbstractEntity;
 import pl.nbd.hotel.client.Client;
+import pl.nbd.hotel.db.UniqueId;
 import pl.nbd.hotel.room.Room;
 
 import java.time.LocalDateTime;
@@ -36,7 +37,7 @@ public class Rent extends AbstractEntity {
     }
 
     @BsonCreator
-    public Rent(@BsonProperty("_id") UUID uuid,
+    public Rent(@BsonProperty("_id") UniqueId uuid,
                 @BsonProperty("id") UUID id,
                 @BsonProperty("beginTime") LocalDateTime beginTime,
                 @BsonProperty("endTime") LocalDateTime endTime,

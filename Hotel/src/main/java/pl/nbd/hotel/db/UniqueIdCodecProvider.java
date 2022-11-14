@@ -15,7 +15,7 @@ public class UniqueIdCodecProvider implements CodecProvider {
     @Override
     @SuppressWarnings("unchecked")
     public <T> Codec<T> get(Class<T> clazz, CodecRegistry registry) {
-        if (clazz == UUID.class) {
+        if (clazz == UniqueId.class) {
             return (Codec<T>) new UniqueIdCodec(registry);
         }
         return null;

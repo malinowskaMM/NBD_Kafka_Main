@@ -14,6 +14,7 @@ import java.util.function.Predicate;
 public class ClientRepository extends AbstractMongoRepository implements Repository<Client> {
 
     public ClientRepository() {
+        super.initDbConnection();
         this.clientMongoCollection = mongoDatabase.getCollection("clients", Client.class);
     }
 

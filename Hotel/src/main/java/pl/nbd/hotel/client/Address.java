@@ -1,37 +1,38 @@
 package pl.nbd.hotel.client;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import org.bson.codecs.pojo.annotations.BsonCreator;
+import org.bson.codecs.pojo.annotations.BsonProperty;
+import pl.nbd.hotel.abstractEntity.AbstractEntity;
+import pl.nbd.hotel.db.UniqueId;
 
-@Embeddable
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Address {
+@Getter
+public class Address extends AbstractEntity {
 
-    @NotNull
-    @Size(max = 96)
-    @Column(name = "STREET", nullable = false, length = 96)
+    @BsonCreator
+    public Address(@BsonProperty("_id") UniqueId uuid,
+                   @BsonProperty("street") String street,
+                   @BsonProperty("streetNumber") String streetNumber,
+                   @BsonProperty("cityName") String cityName,
+                   @BsonProperty("postalCode") String postalCode
+    ) {
+        super(uuid);
+        this.street = street;
+        this.streetNumber = streetNumber;
+        this.cityName = cityName;
+        this.postalCode = postalCode;
+    }
+
+    @BsonProperty("street")
     private String street;
 
-    @NotNull
-    @Size(max = 30)
-    @Column(name = "STREET_NUMBER", nullable = false, length = 30)
+    @BsonProperty("streetNumber")
     private String streetNumber;
 
-    @NotNull
-    @Size(max = 40)
-    @Column(name = "CITY_NAME", nullable = false, length = 40)
+    @BsonProperty("cityName")
     private String cityName;
 
-    @NotNull
-    @Pattern(regexp = "^\\d{2}-\\d{3}$")
-    @Column(name = "POSTAL_CODE", nullable = false, columnDefinition = "VARCHAR(6) CHECK (POSTAL_CODE ~ '^\\d{2}-\\d{3}$')")
+    @BsonProperty("postalCode")
     private String postalCode;
 
     public String getAddressInfo() {

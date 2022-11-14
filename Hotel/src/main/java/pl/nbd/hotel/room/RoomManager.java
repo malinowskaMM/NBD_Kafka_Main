@@ -1,14 +1,11 @@
 package pl.nbd.hotel.room;
 
-import com.mongodb.client.MongoCollection;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.RollbackException;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.nbd.hotel.db.UniqueId;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,7 +21,7 @@ public class RoomManager {
     }
 
     public Room addShowerRoom(String roomNumber, Double basePrice, int roomCapacity, boolean withShelf) {
-        final Room room = new ShowerRoom(UUID.randomUUID(),roomNumber, basePrice, roomCapacity, withShelf);
+        final Room room = new ShowerRoom(new UniqueId(UUID.randomUUID()),roomNumber, basePrice, roomCapacity, withShelf);
         if (validator.validate(room).size() == 0) {
             if (roomRepository.findById(room.roomNumber) != null) {
                 LOGGER.warn("Room {} already exists in the database", room.getRoomNumber());
@@ -39,7 +36,7 @@ public class RoomManager {
     }
 
     public Room addBathRoom(String roomNumber, Double basePrice, int roomCapacity, bathType bathType){
-        final Room room = new BathRoom(UUID.randomUUID(), roomNumber, basePrice, roomCapacity, bathType);
+        final Room room = new BathRoom(new UniqueId(UUID.randomUUID()),roomNumber, basePrice, roomCapacity, bathType);
         if (validator.validate(room).size() == 0) {
                 if (roomRepository.findById(room.roomNumber) != null) {
                     LOGGER.warn("Room {} already exists in the database", room.getRoomNumber());

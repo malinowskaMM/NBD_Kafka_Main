@@ -15,6 +15,7 @@ import java.util.function.Predicate;
 public class RoomRepository extends AbstractMongoRepository implements Repository<Room> {
 
     public RoomRepository() {
+        super.initDbConnection();
         this.roomMongoCollection = mongoDatabase.getCollection("rooms", Room.class);
     }
 
@@ -22,7 +23,7 @@ public class RoomRepository extends AbstractMongoRepository implements Repositor
 
     @Override
     public Room findById(String id) {
-        Bson filter = Filters.eq("personalId", id);
+        Bson filter = Filters.eq("roomNumber", id);
         FindIterable<Room> rooms = roomMongoCollection.find(filter);
         return rooms.first();
     }

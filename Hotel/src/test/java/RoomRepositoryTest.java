@@ -10,21 +10,16 @@
 //import static org.junit.Assert.*;
 //
 //public class RoomRepositoryTest {
-//    EntityManagerFactory entityManagerFactory;
-//    EntityManager entityManager;
 //    RoomRepository roomRepository;
 //
 //    @Before
 //    public void init() {
-//        entityManagerFactory = Persistence.createEntityManagerFactory("HOTEL");
-//        entityManager = entityManagerFactory.createEntityManager();
-//        roomRepository = new RoomRepository(entityManager);
+//        roomRepository = new RoomRepository();
+//        roomRepository.save(new BathRoom("1", 150.0, 2, bathType.SMALL));
 //
-//        entityManager.getTransaction().begin();
-//        entityManager.createNativeQuery("INSERT INTO room(room_number, price, version, room_capacity, bathroom_type, bath_type, with_shelf) " +
-//                "VALUES ('1', 150.0, 1, 2, 'BATH', 'SMALL', 'FALSE')").executeUpdate();
+////        entityManager.createNativeQuery("INSERT INTO room(room_number, price, version, room_capacity, bathroom_type, bath_type, with_shelf) " +
+////                "VALUES ('1', 150.0, 1, 2, 'BATH', 'SMALL', 'FALSE')").executeUpdate();
 //
-//        entityManager.getTransaction().commit();
 //        }
 //
 //    @Test
@@ -57,7 +52,7 @@
 //    public void shouldAddRoomToRepository() {
 //        assertEquals(1, roomRepository.getSize());
 //
-//        RoomManager roomManager = new RoomManager(entityManager);
+//        RoomManager roomManager = new RoomManager();
 //        roomManager.addBathRoom("112", 200.0, 2, bathType.JACUZZI);
 //
 //
@@ -70,7 +65,7 @@
 //
 //        Room room = roomRepository.findById("1");
 //        assertNotNull(room);
-//        RoomManager roomManager = new RoomManager(entityManager);
+//        RoomManager roomManager = new RoomManager();
 //        roomManager.removeRoom(room);
 //
 //        assertEquals(0, roomRepository.getSize());

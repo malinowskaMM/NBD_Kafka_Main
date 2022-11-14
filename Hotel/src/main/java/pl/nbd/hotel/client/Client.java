@@ -5,14 +5,13 @@ import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import pl.nbd.hotel.abstractEntity.AbstractEntity;
 import pl.nbd.hotel.client.type.ClientType;
-
-import java.util.UUID;
+import pl.nbd.hotel.db.UniqueId;
 
 @Getter
 public class Client extends AbstractEntity {
 
     @BsonCreator
-    public Client(@BsonProperty("_id") UUID uuid,
+    public Client(@BsonProperty("_id") UniqueId uuid,
                   @BsonProperty("personalId") String personalId,
                   @BsonProperty("firstName") String firstName,
                   @BsonProperty("lastName") String lastName,
