@@ -3,21 +3,19 @@ package pl.nbd.hotel.room;
 import lombok.*;
 import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonProperty;
-import pl.nbd.hotel.abstractEntity.AbstractEntity;
-import pl.nbd.hotel.db.UniqueId;
 
-import java.util.UUID;
+import java.io.Serializable;
 
 @Getter
-public abstract class Room extends AbstractEntity {
+public abstract class Room implements Serializable {
 
     @BsonCreator
-    public Room(@BsonProperty("_id") UniqueId uuid,
+    public Room(
                 @BsonProperty("roomNumber") String roomNumber,
                 @BsonProperty("price") Double price,
                 @BsonProperty("roomCapacity") Integer roomCapacity
                 ) {
-        super(uuid);
+        super();
         this.roomNumber = roomNumber;
         this.price = price;
         this.roomCapacity = roomCapacity;

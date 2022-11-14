@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import pl.nbd.hotel.client.Client;
 import pl.nbd.hotel.client.ClientRepository;
 import pl.nbd.hotel.client.type.ClientTypeName;
-import pl.nbd.hotel.db.UniqueId;
 import pl.nbd.hotel.room.Room;
 
 import java.time.LocalDateTime;
@@ -33,7 +32,7 @@ public class RentManager {
             if (beginTime.isBefore(endTime)) {
                     final List<Rent> rents = rentRepository.getRentsForRoom(room.getRoomNumber(), beginTime, endTime);
                     if (rents.size() == 0) {
-                        final Rent rent = rentRepository.save(new Rent(new UniqueId(UUID.randomUUID()), UUID.randomUUID(), beginTime, endTime, client, room, client.applyDiscount(room.getPrice())));
+                        final Rent rent = rentRepository.save(new Rent(UUID.randomUUID(), beginTime, endTime, client, room, client.applyDiscount(room.getPrice())));
                         return rent;
                     } else {
                         LOGGER.warn("Room {} is already reserved", room.getRoomNumber());

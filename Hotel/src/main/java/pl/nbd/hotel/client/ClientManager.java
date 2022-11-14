@@ -7,10 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.nbd.hotel.client.type.ClientType;
 import pl.nbd.hotel.client.type.ClientTypeName;
-import pl.nbd.hotel.db.UniqueId;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Predicate;
 
 public class ClientManager {
@@ -24,7 +22,7 @@ public class ClientManager {
     }
 
     public Client registerClient(String firstName, String lastName, String personalId, Address address) {
-        final Client client = new Client(new UniqueId(UUID.randomUUID()), personalId, firstName,lastName,address, 0., new ClientType(ClientTypeName.REGULAR, 0));
+        final Client client = new Client(personalId, firstName,lastName,address, 0., new ClientType(ClientTypeName.REGULAR, 0));
         if (validator.validate(client).size() == 0) {
             if (clientRepository.findById(client.personalId) != null) {
                 LOGGER.warn("Client {} does not exist in the database.", client.personalId);

@@ -5,9 +5,8 @@ import pl.nbd.hotel.client.Client;
 import pl.nbd.hotel.client.ClientRepository;
 import pl.nbd.hotel.client.type.ClientType;
 import pl.nbd.hotel.client.type.ClientTypeName;
-import pl.nbd.hotel.db.UniqueId;
 
-import java.util.UUID;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -18,8 +17,8 @@ public class ClientRepositoryTest {
     public void init() {
         clientRepository = new ClientRepository();
 
-        clientRepository.save(new Client(new UniqueId(UUID.randomUUID()), "11111111111", "imie", "nazwisko",
-                new Address(new UniqueId(UUID.randomUUID()),"ulica", "numer", "miasto", "11-111"), 0.0, new ClientType(ClientTypeName.DIAMOND, 1500)));
+        clientRepository.save(new Client("11111111111", "imie", "nazwisko",
+                new Address("ulica", "numer", "miasto", "11-111"), 0.0, new ClientType(ClientTypeName.DIAMOND, 1500)));
 
 
 //        entityManager.getTransaction().begin();
@@ -33,16 +32,16 @@ public class ClientRepositoryTest {
     public void shouldFindById() {
         String id = "11111111111";
         Client client = clientRepository.findById(id);
-        String info = id.concat(" imie nazwisko ulica numer miasto 11-111 DIAMOND 15");
+        String info = id.concat(" imie nazwisko ulica numer miasto 11-111 DIAMOND 1500");
         assertNotNull(client);
         assertEquals(info,client.getClientInfo());
     }
-//
-//    @Test
-//    public void shouldFindByFirstNameEqualsImie() {
-//        List<Client> client = clientRepository.find(client1 -> client1.getFirstName().equals("imie"));
-//        assertEquals(1,client.size());
-//    }
+
+    @Test
+    public void shouldFindByFirstNameEqualsImie() {
+        List<Client> client = clientRepository.find(client1 -> client1.getFirstName().equals("imie"));
+        assertEquals(1,client.size());
+    }
 //
 //    @Test
 //    public void shouldNotFindByFirstNameEqualsName() {

@@ -3,20 +3,19 @@ package pl.nbd.hotel.client;
 import lombok.Getter;
 import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonProperty;
-import pl.nbd.hotel.abstractEntity.AbstractEntity;
-import pl.nbd.hotel.db.UniqueId;
+
+import java.io.Serializable;
 
 @Getter
-public class Address extends AbstractEntity {
+public class Address implements Serializable {
 
     @BsonCreator
-    public Address(@BsonProperty("_id") UniqueId uuid,
-                   @BsonProperty("street") String street,
+    public Address(@BsonProperty("street") String street,
                    @BsonProperty("streetNumber") String streetNumber,
                    @BsonProperty("cityName") String cityName,
                    @BsonProperty("postalCode") String postalCode
     ) {
-        super(uuid);
+        super();
         this.street = street;
         this.streetNumber = streetNumber;
         this.cityName = cityName;
