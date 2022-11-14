@@ -23,7 +23,7 @@
 //    public void init() {
 //        entityManagerFactory = Persistence.createEntityManagerFactory("HOTEL");
 //        entityManager = entityManagerFactory.createEntityManager();
-//        clientRepository = new ClientRepository(entityManager);
+//        clientRepository = new ClientRepository();
 //
 //        entityManager.getTransaction().begin();
 //        entityManager.createNativeQuery("INSERT INTO ClientType(client_type_name, discount) VALUES ('DIAMOND', 15);").executeUpdate();
@@ -75,7 +75,7 @@
 //        entityManager.persist(clientType);
 //        entityManager.getTransaction().commit();
 //
-//        ClientManager clientManager = new ClientManager(entityManager);
+//        ClientManager clientManager = new ClientManager();
 //        clientManager.registerClient("Jan", "Nowak", "00230908071", new Address("Nowa", "3a", "Warszawa", "00-010"));
 //
 //        assertEquals(3,clientRepository.getSize());
@@ -86,7 +86,7 @@
 //        assertEquals(2,clientRepository.getSize());
 //
 //        Client client = clientRepository.findById("11111111110");
-//        ClientManager clientManager = new ClientManager(entityManager);
+//        ClientManager clientManager = new ClientManager();
 //        clientManager.unregisterClient(client);
 //
 //        assertEquals(1,clientRepository.getSize());

@@ -4,8 +4,8 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
-import lombok.RequiredArgsConstructor;
 import org.bson.conversions.Bson;
+import pl.nbd.hotel.db.AbstractMongoRepository;
 import pl.nbd.hotel.repository.Repository;
 
 import java.time.LocalDateTime;
@@ -13,8 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-@RequiredArgsConstructor
-public class RentRepository implements Repository<Rent> {
+public class RentRepository extends AbstractMongoRepository implements Repository<Rent> {
+
+    public RentRepository() {
+        this.rentMongoCollection = mongoDatabase.getCollection("rents", Rent.class);
+    }
 
     private final MongoCollection<Rent> rentMongoCollection;
 
@@ -74,4 +77,8 @@ public class RentRepository implements Repository<Rent> {
     }
 
 
+    @Override
+    public void close() throws Exception {
+
+    }
 }

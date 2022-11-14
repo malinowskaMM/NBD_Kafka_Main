@@ -25,7 +25,7 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
             .build());
 
     private MongoClient mongoClient;
-    private MongoDatabase mongoDatabase; //rentACarDB
+    public MongoDatabase mongoDatabase; //rentACarDB
 
     private void initDbConnection() {
         MongoClientSettings settings = MongoClientSettings.builder()

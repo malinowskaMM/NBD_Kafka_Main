@@ -20,8 +20,8 @@ public class ClientManager {
     private final ClientRepository clientRepository;
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
-    public ClientManager(MongoCollection<Client> clientMongoCollection) {
-        this.clientRepository = new ClientRepository(clientMongoCollection);
+    public ClientManager() {
+        this.clientRepository = new ClientRepository();
     }
 
     public Client registerClient(String firstName, String lastName, String personalId, Address address) {

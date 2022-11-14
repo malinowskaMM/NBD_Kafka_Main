@@ -4,16 +4,19 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
-import lombok.RequiredArgsConstructor;
 import org.bson.conversions.Bson;
+import pl.nbd.hotel.db.AbstractMongoRepository;
 import pl.nbd.hotel.repository.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-@RequiredArgsConstructor
-public class RoomRepository implements Repository<Room> {
+public class RoomRepository extends AbstractMongoRepository implements Repository<Room> {
+
+    public RoomRepository() {
+        this.roomMongoCollection = mongoDatabase.getCollection("rooms", Room.class);
+    }
 
     private final MongoCollection<Room> roomMongoCollection;
 
@@ -59,5 +62,10 @@ public class RoomRepository implements Repository<Room> {
     public void remove(Room object) {
         Bson filter = Filters.eq("roomNumber", object.roomNumber);
         roomMongoCollection.deleteOne(filter);
+    }
+
+    @Override
+    public void close() throws Exception {
+
     }
 }

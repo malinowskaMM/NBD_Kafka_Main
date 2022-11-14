@@ -4,15 +4,18 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
-import lombok.RequiredArgsConstructor;
 import org.bson.conversions.Bson;
+import pl.nbd.hotel.db.AbstractMongoRepository;
 import pl.nbd.hotel.repository.Repository;
 
 import java.util.*;
 import java.util.function.Predicate;
 
-@RequiredArgsConstructor
-public class ClientRepository implements Repository<Client> {
+public class ClientRepository extends AbstractMongoRepository implements Repository<Client> {
+
+    public ClientRepository() {
+        this.clientMongoCollection = mongoDatabase.getCollection("clients", Client.class);
+    }
 
     private final MongoCollection<Client> clientMongoCollection;
 
@@ -58,5 +61,10 @@ public class ClientRepository implements Repository<Client> {
     public void remove(Client object) {
         Bson filter = Filters.eq("personalId", object.getPersonalId());
         clientMongoCollection.deleteOne(filter);
+    }
+
+    @Override
+    public void close() throws Exception {
+
     }
 }

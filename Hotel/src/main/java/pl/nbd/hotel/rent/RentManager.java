@@ -1,8 +1,5 @@
 package pl.nbd.hotel.rent;
 
-import com.mongodb.client.MongoCollection;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.LockModeType;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +22,9 @@ public class RentManager {
     private final ClientRepository clientRepository;
     private final RentRepository rentRepository;
 
-    public RentManager(MongoCollection<Rent> rentMongoCollection, MongoCollection<Client> clientMongoCollection) {
-        this.rentRepository = new RentRepository(rentMongoCollection);
-        this.clientRepository = new ClientRepository(clientMongoCollection);
+    public RentManager() {
+        this.rentRepository = new RentRepository();
+        this.clientRepository = new ClientRepository();
     }
 
     public Rent rentRoom(Client client, Room room, LocalDateTime beginTime, LocalDateTime endTime) {
