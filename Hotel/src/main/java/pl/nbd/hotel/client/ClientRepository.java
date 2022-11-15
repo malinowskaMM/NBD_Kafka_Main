@@ -40,7 +40,7 @@ public class ClientRepository extends AbstractMongoRepository implements Reposit
 
     @Override
     public List<Client> findAll() {
-        return clientMongoCollection.aggregate(List.of(Aggregates.replaceRoot("$client")),Client.class).into(new ArrayList<>());
+        return clientMongoCollection.find().into(new ArrayList<>());
     }
 
     @Override

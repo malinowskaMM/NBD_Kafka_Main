@@ -17,15 +17,10 @@ public class ClientRepositoryTest {
     public void init() {
         clientRepository = new ClientRepository();
 
-        clientRepository.save(new Client("11111111111", "imie", "nazwisko",
-                new Address("ulica", "numer", "miasto", "11-111"), 0.0, new ClientType(ClientTypeName.DIAMOND, 1500)));
-
-
-//        entityManager.getTransaction().begin();
-//        entityManager.createNativeQuery("INSERT INTO Client (personal_id, version, city_name, postal_code, street, street_number, first_name, last_name, client_type_name, money_spent) " +
-//                "VALUES ('11111111110', 1, 'miastoDuze', '12-211', 'ulicaDluga', 'numerN', 'xyz', 'zyx', 'DIAMOND', 0.0);").executeUpdate();
-//        entityManager.getTransaction().commit();
-
+//        clientRepository.save(new Client("11111111111", "imie", "nazwisko",
+//                new Address("ulica", "numer", "miasto", "11-111"), 0.0, new ClientType(ClientTypeName.DIAMOND, 1500)));
+//        clientRepository.save(new Client("11111111110", "xyz", "zyx",
+//                new Address("ulicaDluga", "numerN", "miastoDuze", "12-211"), 0.0, new ClientType(ClientTypeName.DIAMOND, 1500)));
     }
 
     @Test
@@ -42,18 +37,18 @@ public class ClientRepositoryTest {
         List<Client> client = clientRepository.find(client1 -> client1.getFirstName().equals("imie"));
         assertEquals(1,client.size());
     }
-//
-//    @Test
-//    public void shouldNotFindByFirstNameEqualsName() {
-//        List<Client> client = clientRepository.find(client1 -> client1.getFirstName().equals("name"));
-//        assertEquals(0,client.size());
-//    }
-//
-//    @Test
-//    public void shouldReturnListSizeEqualsTwo() {
-//        List<Client> clients = clientRepository.findAll();
-//        assertEquals(2,clients.size());
-//    }
+
+    @Test
+    public void shouldNotFindByFirstNameEqualsName() {
+        List<Client> client = clientRepository.find(client1 -> client1.getFirstName().equals("name"));
+        assertEquals(0,client.size());
+    }
+
+    @Test
+    public void shouldReturnListSizeEqualsTwo() {
+        List<Client> clients = clientRepository.findAll();
+        assertEquals(2,clients.size());
+    }
 //
 //    @Test
 //    public void shouldAddClientToRepository() {
