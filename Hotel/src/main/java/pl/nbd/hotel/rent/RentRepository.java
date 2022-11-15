@@ -2,7 +2,6 @@ package pl.nbd.hotel.rent;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
 import org.bson.conversions.Bson;
 import pl.nbd.hotel.db.AbstractMongoRepository;
@@ -42,7 +41,7 @@ public class RentRepository extends AbstractMongoRepository implements Repositor
 
     @Override
     public List<Rent> findAll() {
-        return rentMongoCollection.aggregate(List.of(Aggregates.replaceRoot("$rent")),Rent.class).into(new ArrayList<>());
+        return rentMongoCollection.find().into(new ArrayList<>());
     }
 
     @Override

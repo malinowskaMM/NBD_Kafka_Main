@@ -2,7 +2,6 @@ package pl.nbd.hotel.room;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
 import org.bson.conversions.Bson;
 import pl.nbd.hotel.db.AbstractMongoRepository;
@@ -23,8 +22,10 @@ public class RoomRepository extends AbstractMongoRepository implements Repositor
 
     @Override
     public Room findById(String id) {
-        Bson filter = Filters.eq("roomNumber", id);
+        Bson filter = Filters.eq("_class", "bath");
         FindIterable<Room> rooms = roomMongoCollection.find(filter);
+
+
         return rooms.first();
     }
 
@@ -41,7 +42,7 @@ public class RoomRepository extends AbstractMongoRepository implements Repositor
 
     @Override
     public List<Room> findAll() {
-        return roomMongoCollection.aggregate(List.of(Aggregates.replaceRoot("$room")),Room.class).into(new ArrayList<>());
+        return roomMongoCollection.find().into(new ArrayList<>());
     }
 
     @Override

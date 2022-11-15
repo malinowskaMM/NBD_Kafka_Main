@@ -17,7 +17,6 @@ import java.util.function.Predicate;
 
 public class RentManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Slf4j.class);
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
     private final ClientRepository clientRepository;
     private final RentRepository rentRepository;
@@ -34,14 +33,8 @@ public class RentManager {
                     if (rents.size() == 0) {
                         final Rent rent = rentRepository.save(new Rent(UUID.randomUUID(), beginTime, endTime, client, room, client.applyDiscount(room.getPrice())));
                         return rent;
-                    } else {
-                        LOGGER.warn("Room {} is already reserved", room.getRoomNumber());
                     }
-            } else {
-                LOGGER.warn("Begin time of reservation {} is not earlier than end time of reservation {}", beginTime, endTime);
             }
-        } else {
-            LOGGER.error("Parameters validation failed");
         }
         return null;
     }
@@ -54,11 +47,7 @@ public class RentManager {
                 client.setMoneySpent(rent1.client.getMoneySpent() + rent1.rentCost);
                 rentRepository.remove(rent1);
                 checkChangeClientType(client);
-            } else {
-                LOGGER.warn("Rent {} does not exist in the database", rent.getId());
             }
-        } else {
-            LOGGER.error("Rent {} validation failed", rent.getId());
         }
     }
 

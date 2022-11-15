@@ -1,10 +1,7 @@
 import org.junit.Before;
 import org.junit.Test;
-import pl.nbd.hotel.client.Address;
 import pl.nbd.hotel.client.Client;
 import pl.nbd.hotel.client.ClientRepository;
-import pl.nbd.hotel.client.type.ClientType;
-import pl.nbd.hotel.client.type.ClientTypeName;
 
 import java.util.List;
 
@@ -17,6 +14,7 @@ public class ClientRepositoryTest {
     public void init() {
         clientRepository = new ClientRepository();
 
+//          tylko przy pieerwszym uruchomieniu, bo będzie się dodawać, ża każdym razem
 //        clientRepository.save(new Client("11111111111", "imie", "nazwisko",
 //                new Address("ulica", "numer", "miasto", "11-111"), 0.0, new ClientType(ClientTypeName.DIAMOND, 1500)));
 //        clientRepository.save(new Client("11111111110", "xyz", "zyx",
@@ -49,7 +47,7 @@ public class ClientRepositoryTest {
         List<Client> clients = clientRepository.findAll();
         assertEquals(2,clients.size());
     }
-//
+
 //    @Test
 //    public void shouldAddClientToRepository() {
 //        assertEquals(2,clientRepository.getSize());

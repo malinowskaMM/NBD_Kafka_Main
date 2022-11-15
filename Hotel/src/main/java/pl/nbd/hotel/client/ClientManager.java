@@ -13,7 +13,6 @@ import java.util.function.Predicate;
 
 public class ClientManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Slf4j.class);
     private final ClientRepository clientRepository;
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
@@ -24,28 +23,20 @@ public class ClientManager {
     public Client registerClient(String firstName, String lastName, String personalId, Address address) {
         final Client client = new Client(personalId, firstName,lastName,address, 0., new ClientType(ClientTypeName.REGULAR, 0));
         if (validator.validate(client).size() == 0) {
-            if (clientRepository.findById(client.personalId) != null) {
-                LOGGER.warn("Client {} does not exist in the database.", client.personalId);
-            } else {
+            if (clientRepository.findById(client.personalId) == null) {
                 final Client client1 = clientRepository.save(client);
                 return client1;
                 }
-        } else {
-            LOGGER.error("Client {} validation failed.", client.personalId);
-          }
+        }
     return null;
     }
 
     public void unregisterClient(Client client) {
         if (validator.validate(client).size() == 0) {
             final Client client1 = clientRepository.findById(client.personalId);
-            if(client1 == null) {
-                LOGGER.warn("Client {} does not exist in the database.", client.personalId);
-            } else {
+            if(client1 != null) {
                 clientRepository.remove(client1);
             }
-        } else {
-            LOGGER.atError().log("Client {} validation failed.", client.personalId);
         }
     }
 

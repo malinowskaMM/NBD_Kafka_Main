@@ -2,7 +2,6 @@ package pl.nbd.hotel.client;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
 import org.bson.conversions.Bson;
 import pl.nbd.hotel.db.AbstractMongoRepository;

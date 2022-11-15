@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class RoomManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Slf4j.class);
     private final RoomRepository roomRepository;
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
@@ -21,14 +20,10 @@ public class RoomManager {
     public Room addShowerRoom(String roomNumber, Double basePrice, int roomCapacity, boolean withShelf) {
         final Room room = new ShowerRoom(roomNumber, basePrice, roomCapacity, withShelf);
         if (validator.validate(room).size() == 0) {
-            if (roomRepository.findById(room.roomNumber) != null) {
-                LOGGER.warn("Room {} already exists in the database", room.getRoomNumber());
-            } else {
+            if (roomRepository.findById(room.roomNumber) == null) {
                 final Room savedRoom = roomRepository.save(room);
                 return savedRoom;
                 }
-        } else {
-            LOGGER.warn("Room {} validation failed", room.getRoomNumber());
         }
         return null;
     }
@@ -36,14 +31,10 @@ public class RoomManager {
     public Room addBathRoom(String roomNumber, Double basePrice, int roomCapacity, bathType bathType){
         final Room room = new BathRoom(roomNumber, basePrice, roomCapacity, bathType);
         if (validator.validate(room).size() == 0) {
-                if (roomRepository.findById(room.roomNumber) != null) {
-                    LOGGER.warn("Room {} already exists in the database", room.getRoomNumber());
-                } else {
-                    final Room savedRoom = roomRepository.save(room);
-                    return savedRoom;
-                }
-        } else {
-            LOGGER.warn("Room {} validation failed", room.getRoomNumber());
+            if (roomRepository.findById(room.roomNumber) == null) {
+                final Room savedRoom = roomRepository.save(room);
+                return savedRoom;
+            }
         }
         return null;
     }
@@ -51,13 +42,9 @@ public class RoomManager {
     public void removeRoom(Room room) {
         if (validator.validate(room).size() == 0) {
             final Room room1 = roomRepository.findById(room.getRoomNumber());
-            if(room1 == null) {
-                LOGGER.warn("Room {} does not exist in the database", room.getRoomNumber());
-            } else {
+            if(room1 != null) {
                 roomRepository.remove(room1);
             }
-        } else {
-            LOGGER.warn("Room {} validation failed", room.getRoomNumber());
         }
     }
 
