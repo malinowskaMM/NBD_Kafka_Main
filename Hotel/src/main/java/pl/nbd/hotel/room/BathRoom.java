@@ -24,5 +24,7 @@ public class BathRoom extends Room {
     @BsonProperty("bathType")
     bathType bathType;
 
-
+    public String getRoomInfo() {
+        return super.getRoomInfo().concat(" ").concat(bathType.name());
+    }
 }

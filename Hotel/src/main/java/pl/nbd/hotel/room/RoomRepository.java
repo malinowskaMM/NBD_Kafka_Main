@@ -22,10 +22,8 @@ public class RoomRepository extends AbstractMongoRepository implements Repositor
 
     @Override
     public Room findById(String id) {
-        Bson filter = Filters.eq("_class", "bath");
+        Bson filter = Filters.eq("_id", id);
         FindIterable<Room> rooms = roomMongoCollection.find(filter);
-
-
         return rooms.first();
     }
 
