@@ -1,7 +1,12 @@
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import pl.nbd.hotel.client.Address;
 import pl.nbd.hotel.client.Client;
+import pl.nbd.hotel.client.ClientManager;
 import pl.nbd.hotel.client.ClientRepository;
+import pl.nbd.hotel.client.type.ClientType;
+import pl.nbd.hotel.client.type.ClientTypeName;
 
 import java.util.List;
 
@@ -13,12 +18,13 @@ public class ClientRepositoryTest {
     @Before
     public void init() {
         clientRepository = new ClientRepository();
+        clientRepository.mongoDatabase.drop();
 
-//          tylko przy pieerwszym uruchomieniu, bo będzie się dodawać, ża każdym razem
-//        clientRepository.save(new Client("11111111111", "imie", "nazwisko",
-//                new Address("ulica", "numer", "miasto", "11-111"), 0.0, new ClientType(ClientTypeName.DIAMOND, 1500)));
-//        clientRepository.save(new Client("11111111110", "xyz", "zyx",
-//                new Address("ulicaDluga", "numerN", "miastoDuze", "12-211"), 0.0, new ClientType(ClientTypeName.DIAMOND, 1500)));
+          //tylko przy pieerwszym uruchomieniu, bo będzie się dodawać, ża każdym razem
+        clientRepository.save(new Client("11111111111", "imie", "nazwisko",
+                new Address("ulica", "numer", "miasto", "11-111"), 0.0, new ClientType(ClientTypeName.DIAMOND, 1500)));
+        clientRepository.save(new Client("11111111110", "xyz", "zyx",
+                new Address("ulicaDluga", "numerN", "miastoDuze", "12-211"), 0.0, new ClientType(ClientTypeName.DIAMOND, 1500)));
     }
 
     @Test
@@ -48,30 +54,24 @@ public class ClientRepositoryTest {
         assertEquals(2,clients.size());
     }
 
-//    @Test
-//    public void shouldAddClientToRepository() {
-//        assertEquals(2,clientRepository.getSize());
-//
-//        ClientType clientType = new ClientType(ClientTypeName.REGULAR, 0);
+    @Test
+    public void shouldAddClientToRepository() {
+        assertEquals(2,clientRepository.getSize());
 
-//        entityManager.getTransaction().begin();
-//        entityManager.persist(clientType);
-//        entityManager.getTransaction().commit();
-//
-//        ClientManager clientManager = new ClientManager();
-//        clientManager.registerClient("Jan", "Nowak", "00230908071", new Address("Nowa", "3a", "Warszawa", "00-010"));
-//
-//        assertEquals(3,clientRepository.getSize());
-//    }
-//
-//    @Test
-//    public void shouldRemoveClientFromRepository() {
-//        assertEquals(2,clientRepository.getSize());
-//
-//        Client client = clientRepository.findById("11111111110");
-//        ClientManager clientManager = new ClientManager();
-//        clientManager.unregisterClient(client);
-//
-//        assertEquals(1,clientRepository.getSize());
-//    }
+        ClientManager clientManager = new ClientManager();
+        clientManager.registerClient("Jan", "Nowak", "00230908071", new Address("Nowa", "3a", "Warszawa", "00-010"));
+
+        assertEquals(3,clientRepository.getSize());
+    }
+
+    @Test
+    public void shouldRemoveClientFromRepository() {
+        assertEquals(2,clientRepository.getSize());
+
+        Client client = clientRepository.findById("11111111110");
+        ClientManager clientManager = new ClientManager();
+        clientManager.unregisterClient(client);
+
+        assertEquals(1,clientRepository.getSize());
+    }
 }

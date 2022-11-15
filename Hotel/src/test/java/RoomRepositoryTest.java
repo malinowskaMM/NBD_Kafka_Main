@@ -12,7 +12,7 @@ public class RoomRepositoryTest {
     @Before
     public void init() {
         roomRepository = new RoomRepository();
-        //roomRepository.save(new BathRoom("1", 150.0, 2, bathType.SMALL));
+        roomRepository.save(new BathRoom("1", 150.0, 2, bathType.SMALL));
         }
 
     @Test

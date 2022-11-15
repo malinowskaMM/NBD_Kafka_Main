@@ -2,9 +2,6 @@ package pl.nbd.hotel.room;
 
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.function.Predicate;
