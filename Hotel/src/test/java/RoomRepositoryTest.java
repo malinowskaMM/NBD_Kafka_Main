@@ -60,8 +60,7 @@ public class RoomRepositoryTest {
 
         Room room = roomRepository.findById("1");
         assertNotNull(room);
-        RoomManager roomManager = new RoomManager();
-        roomManager.removeRoom(room);
+        roomRepository.removeById("1");
 
         assertEquals(1, roomRepository.getSize());
     }
