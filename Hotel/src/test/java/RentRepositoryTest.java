@@ -43,9 +43,10 @@ public class RentRepositoryTest {
                 LocalDateTime.of(2022, 10, 20, 12, 0), client1, room1, 800.0));
 
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        roomExample = new BathRoom("2", 120.0, 1, bathType.SMALL);
-        clientExample = new Client("11010101010","imie", "nazwisko", new Address("ulica", "numer", "miasto", "11-111"), 0.0, new ClientType(ClientTypeName.DIAMOND, 15));
-        rentExample = new Rent(UUID.fromString("c9ba0eae-5011-11fd-bdc3-0243ac120002"), LocalDateTime.parse("2022-10-19 13:10:00", formatter), LocalDateTime.parse("2022-10-20 13:10:00", formatter), clientExample, roomExample, 280.0);
+
+        roomExample = new BathRoom("3", 150.0, 2, bathType.SMALL);
+        clientExample = new Client("11111111111","imie", "nazwisko", new Address("ulica", "numer", "miasto", "11-111"), 0.0, new ClientType(ClientTypeName.DIAMOND, 1500));
+        rentExample = new Rent(UUID.fromString("c9ba0eae-5084-11ed-bdc3-0242ac120002"), LocalDateTime.parse("2022-10-18 13:10:00", formatter), LocalDateTime.parse("2022-10-20 12:00:00", formatter), clientExample, roomExample, 1000.0);
 
     }
 
@@ -53,7 +54,7 @@ public class RentRepositoryTest {
     public void shouldFindById() {
         String id = "c9ba0eae-5084-11ed-bdc3-0242ac120002";
         Rent rent = rentRepository.findById(id);
-        assertTrue(rent.getRentInfo().equals(rentExample.getRentInfo()));
+        assertEquals(rentExample.getRentInfo(), rent.getRentInfo());
     }
 
     @Test
