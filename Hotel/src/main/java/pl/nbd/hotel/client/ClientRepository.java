@@ -1,8 +1,12 @@
 package pl.nbd.hotel.client;
 
+import com.mongodb.MongoCommandException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.CreateCollectionOptions;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.ValidationOptions;
+import org.bson.Document;
 import org.bson.conversions.Bson;
 import pl.nbd.hotel.db.AbstractMongoRepository;
 import pl.nbd.hotel.repository.Repository;
@@ -14,6 +18,34 @@ public class ClientRepository extends AbstractMongoRepository implements Reposit
 
     public ClientRepository() {
         super.initDbConnection();
+        try{
+            this.mongoDatabase.createCollection("clients", new CreateCollectionOptions().validationOptions(new ValidationOptions().validator(
+                    Document.parse(
+                            """
+                                            {
+                                               $jsonSchema: {
+                                                  bsonType: "object",
+                                                  required: [ "personalId" ],
+                                                  properties: {
+                                                     lastName: {
+                                                        bsonType: "string",
+                                                        description: "must be a string"
+                                                     },
+                                                     personalId: {
+                                                        bsonType: "string",
+                                                        description: "must be a string"
+                                                     }
+                                                  }
+                                               }
+                                            }
+                                    """
+                    )
+            )));
+        } catch (MongoCommandException mongoCommandException) {
+
+        }
+
+
         this.clientMongoCollection = mongoDatabase.getCollection("clients", Client.class);
     }
 
