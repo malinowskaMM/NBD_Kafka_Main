@@ -45,7 +45,7 @@ public class RentManager {
             if(rent1 != null) {
                 final Client client = rent1.getClient();
                 client.setMoneySpent(rent1.client.getMoneySpent() + rent1.rentCost);
-                rentRepository.remove(rent1);
+                rentRepository.removeById(rent1.id.toString());
                 checkChangeClientType(client);
             }
         }

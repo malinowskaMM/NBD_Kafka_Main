@@ -1,6 +1,5 @@
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeAll;
 import pl.nbd.hotel.client.Address;
 import pl.nbd.hotel.client.Client;
 import pl.nbd.hotel.client.ClientManager;

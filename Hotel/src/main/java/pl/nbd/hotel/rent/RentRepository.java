@@ -10,11 +10,13 @@ import pl.nbd.hotel.repository.Repository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 public class RentRepository extends AbstractMongoRepository implements Repository<Rent> {
 
     public RentRepository() {
+        super.initDbConnection();
         this.rentMongoCollection = mongoDatabase.getCollection("rents", Rent.class);
     }
 
@@ -22,7 +24,7 @@ public class RentRepository extends AbstractMongoRepository implements Repositor
 
     @Override
     public Rent findById(String id) {
-        Bson filter = Filters.eq("id", id);
+        Bson filter = Filters.eq("_id", UUID.fromString(id));
         FindIterable<Rent> rents = rentMongoCollection.find(filter);
         return rents.first();
     }
@@ -60,8 +62,8 @@ public class RentRepository extends AbstractMongoRepository implements Repositor
     }
 
     @Override
-    public void remove(Rent object) {
-        Bson filter = Filters.eq("id", object.getId());
+    public void removeById(String id) {
+        Bson filter = Filters.eq("id", id);
         rentMongoCollection.deleteOne(filter);
     }
 

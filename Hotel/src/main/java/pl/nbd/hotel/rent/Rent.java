@@ -2,6 +2,7 @@ package pl.nbd.hotel.rent;
 
 import lombok.*;
 import org.bson.codecs.pojo.annotations.BsonCreator;
+import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import pl.nbd.hotel.client.Client;
 import pl.nbd.hotel.room.Room;
@@ -13,7 +14,7 @@ import java.util.UUID;
 @Getter
 public class Rent implements Serializable {
 
-    @BsonProperty("id")
+    @BsonId
     UUID id;
 
     @BsonProperty("beginTime")
@@ -28,7 +29,7 @@ public class Rent implements Serializable {
     @BsonProperty("client")
     Client client;
 
-    @BsonProperty("room")
+    @BsonProperty(value = "room", useDiscriminator = true)
     Room room;
 
     public String getRentInfo() {
@@ -37,13 +38,12 @@ public class Rent implements Serializable {
 
     @BsonCreator
     public Rent(
-                @BsonProperty("id") UUID id,
+            @BsonId UUID id,
                 @BsonProperty("beginTime") LocalDateTime beginTime,
                 @BsonProperty("endTime") LocalDateTime endTime,
                 @BsonProperty("client") Client client,
                 @BsonProperty("room") Room room,
                 @BsonProperty("rentCost") Double rentCost) {
-        super();
         this.id = id;
         this.beginTime = beginTime;
         this.endTime = endTime;

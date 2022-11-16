@@ -9,11 +9,18 @@ import org.bson.codecs.pojo.annotations.BsonProperty;
 import java.io.Serializable;
 
 @Getter
-@BsonDiscriminator(key="_clazz")
+@BsonDiscriminator(key="_cls", value = "abstract")
 public abstract class Room implements Serializable {
 
+    @BsonCreator
+    public Room(@BsonProperty("roomNumber") String roomNumber,
+                @BsonProperty("price") Double price,
+                @BsonProperty("roomCapacity") Integer roomCapacity) {
+        this.roomNumber = roomNumber;
+        this.price = price;
+        this.roomCapacity = roomCapacity;
+    }
 
-    @BsonProperty("roomNumber")
     @BsonId
     String roomNumber;
 
@@ -22,6 +29,8 @@ public abstract class Room implements Serializable {
 
     @BsonProperty("roomCapacity")
     Integer roomCapacity;
+
+
 
     public String getRoomInfo() {
         return roomNumber.concat(" ").concat(price.toString()).concat(" ").concat(roomCapacity.toString());

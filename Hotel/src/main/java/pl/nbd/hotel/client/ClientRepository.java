@@ -58,8 +58,8 @@ public class ClientRepository extends AbstractMongoRepository implements Reposit
     }
 
     @Override
-    public void remove(Client object) {
-        Bson filter = Filters.eq("personalId", object.getPersonalId());
+    public void removeById(String id) {
+        Bson filter = Filters.eq("personalId", id);
         clientMongoCollection.deleteOne(filter);
     }
 

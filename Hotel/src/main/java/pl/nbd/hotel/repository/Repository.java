@@ -10,5 +10,5 @@ public interface Repository<T> {
     List<T> findAll();
     String getReport();
     int getSize();
-    void remove(T object);
+    void removeById(String id);
 }

@@ -35,7 +35,7 @@ public class ClientManager {
         if (validator.validate(client).size() == 0) {
             final Client client1 = clientRepository.findById(client.personalId);
             if(client1 != null) {
-                clientRepository.remove(client1);
+                clientRepository.removeById(client1.personalId);
             }
         }
     }

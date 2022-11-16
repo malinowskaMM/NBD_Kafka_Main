@@ -59,9 +59,9 @@ public class RoomRepository extends AbstractMongoRepository implements Repositor
     }
 
     @Override
-    public void remove(Room object) {
-        Bson filter = Filters.eq("roomNumber", object.roomNumber);
-        roomMongoCollection.deleteOne(filter);
+    public void removeById(String id) {
+        Bson filter = Filters.eq("_id", id);
+        roomMongoCollection.findOneAndDelete(filter);
     }
 
     @Override

@@ -40,7 +40,7 @@ public class RoomManager {
         if (validator.validate(room).size() == 0) {
             final Room room1 = roomRepository.findById(room.getRoomNumber());
             if(room1 != null) {
-                roomRepository.remove(room1);
+                roomRepository.removeById(room1.roomNumber);
             }
         }
     }

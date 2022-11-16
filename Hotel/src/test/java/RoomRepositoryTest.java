@@ -14,12 +14,13 @@ public class RoomRepositoryTest {
         roomRepository = new RoomRepository();
         roomRepository.mongoDatabase.drop();
         roomRepository.save(new BathRoom("1", 150.0, 2, bathType.SMALL));
-        }
+        roomRepository.save(new ShowerRoom("2", 150.0, 1, true));
+    }
 
     @Test
     public void shouldFindById() {
         Room room = roomRepository.findById("1");
-        String info = "1".concat(" 150.0 2");
+        String info = "1".concat(" 150.0 2 SMALL");
         assertNotNull(room);
         assertEquals(info,room.getRoomInfo());
     }
@@ -39,29 +40,29 @@ public class RoomRepositoryTest {
     @Test
     public void shouldReturnListSizeEqualsTwo() {
         List<Room> rooms = roomRepository.findAll();
-        assertEquals(1,rooms.size());
+        assertEquals(2,rooms.size());
     }
 
     @Test
     public void shouldAddRoomToRepository() {
-        assertEquals(1, roomRepository.getSize());
+        assertEquals(2, roomRepository.getSize());
 
         RoomManager roomManager = new RoomManager();
         roomManager.addBathRoom("112", 200.0, 2, bathType.JACUZZI);
 
 
-        assertEquals(2, roomRepository.getSize());
+        assertEquals(3, roomRepository.getSize());
     }
 
     @Test
     public void shouldRemoveRoomFromRepository() {
-        assertEquals(1, roomRepository.getSize());
+        assertEquals(2, roomRepository.getSize());
 
         Room room = roomRepository.findById("1");
         assertNotNull(room);
         RoomManager roomManager = new RoomManager();
         roomManager.removeRoom(room);
 
-        assertEquals(0, roomRepository.getSize());
+        assertEquals(1, roomRepository.getSize());
     }
 }

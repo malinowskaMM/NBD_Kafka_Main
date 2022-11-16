@@ -1,27 +1,23 @@
 package pl.nbd.hotel.room;
 
 import lombok.Getter;
-import org.bson.codecs.pojo.annotations.BsonCreator;
-import org.bson.codecs.pojo.annotations.BsonDiscriminator;
-import org.bson.codecs.pojo.annotations.BsonProperty;
+import org.bson.codecs.pojo.annotations.*;
 
 @Getter
-@BsonDiscriminator(key="_clazz", value="bath")
+@BsonDiscriminator(key="_cls", value="bathroom")
 public class BathRoom extends Room {
 
     @BsonCreator
     public BathRoom(
-                       @BsonProperty("roomNumber") String roomNumber,
+                       @BsonId String roomNumber,
                        @BsonProperty("price") Double price,
                        @BsonProperty("roomCapacity") Integer roomCapacity,
                        @BsonProperty("bathType") bathType bathType) {
-        this.roomNumber = roomNumber;
-        this.price = price;
-        this.roomCapacity = roomCapacity;
+        super(roomNumber, price, roomCapacity);
         this.bathType = bathType;
     }
 
-    @BsonProperty("bathType")
+    @BsonProperty(value = "bathType")
     bathType bathType;
 
     public String getRoomInfo() {
