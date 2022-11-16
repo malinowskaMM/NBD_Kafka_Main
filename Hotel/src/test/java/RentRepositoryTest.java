@@ -2,6 +2,7 @@ import org.junit.Before;
 import org.junit.Test;
 import pl.nbd.hotel.client.Address;
 import pl.nbd.hotel.client.Client;
+import pl.nbd.hotel.client.ClientRepository;
 import pl.nbd.hotel.client.type.ClientType;
 import pl.nbd.hotel.client.type.ClientTypeName;
 import pl.nbd.hotel.rent.Rent;
@@ -18,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 
 public class RentRepositoryTest {
     RentRepository rentRepository;
+    ClientRepository clientRepository;
     Rent rentExample;
 
     Client clientExample;
@@ -27,11 +29,15 @@ public class RentRepositoryTest {
     @Before
     public void init() {
         rentRepository = new RentRepository();
+        clientRepository = new ClientRepository();
 
         rentRepository.mongoDatabase.drop();
+        clientRepository.mongoDatabase.drop();
 
         Client client = new Client("11111111111", "imie", "nazwisko", new Address("ulica", "numer", "miasto", "11-111"), 0.0, new ClientType(ClientTypeName.DIAMOND, 1500));
         Client client1 = new Client("11010101010", "imie", "nazwisko", new Address("ulica", "numer", "miasto", "11-111"), 0.0, new ClientType(ClientTypeName.DIAMOND, 1500));
+        clientRepository.save(client);
+        clientRepository.save(client1);
 
         Room room = new BathRoom("3", 150.0, 2, bathType.SMALL);
         Room room1 = new BathRoom("4", 120.0, 1, bathType.SMALL);
@@ -78,7 +84,7 @@ public class RentRepositoryTest {
         Client clientExample2 = new Client("11010000000","imie2", "nazwisko2", new Address("ulica2", "numer2", "miasto2", "00-111"), 0.0, new ClientType(ClientTypeName.DIAMOND, 15));
 
 
-        RentManager rentManager = new RentManager();
+        RentManager rentManager = new RentManager(rentRepository, clientRepository);
         rentManager.rentRoom(clientExample2, roomExample2, LocalDateTime.parse("2022-10-10 13:10:00", formatter), LocalDateTime.parse("2022-10-25 13:10:00", formatter));
         assertEquals(3, rentRepository.getSize());
     }
@@ -88,10 +94,10 @@ public class RentRepositoryTest {
         assertEquals(2, rentRepository.getSize());
 
         Rent rent = rentRepository.findById("c9ba0eae-5084-11ed-bdc3-0242ac120002");
-        RentManager rentManager = new RentManager();
+        RentManager rentManager = new RentManager(rentRepository, clientRepository);
         rentManager.endRoomRent(rent);
 
-        assertEquals(1, rentRepository.getSize());
+        assertEquals(2, rentRepository.getSize());
     }
 
     @Test
@@ -102,7 +108,7 @@ public class RentRepositoryTest {
         Client clientExample3 = new Client("10000000000","imie3", "nazwisko3", new Address("ulica3", "numer3", "miasto3", "01-101"), 0.0, new ClientType(ClientTypeName.DIAMOND, 15));
 
 
-        RentManager rentManager = new RentManager();
+        RentManager rentManager = new RentManager(rentRepository, clientRepository);
         rentManager.rentRoom(clientExample2, roomExample2, LocalDateTime.parse("2022-10-10 13:10:00", formatter), LocalDateTime.parse("2022-10-25 13:10:00", formatter));
         assertEquals(3, rentRepository.getSize());
     }
@@ -115,7 +121,7 @@ public class RentRepositoryTest {
         Client clientExample3 = new Client("10000000000","imie3", "nazwisko3", new Address("ulica3", "numer3", "miasto3", "01-101"), 0.0, new ClientType(ClientTypeName.DIAMOND, 15));
 
 
-        RentManager rentManager = new RentManager();
+        RentManager rentManager = new RentManager(rentRepository, clientRepository);
         rentManager.rentRoom(clientExample2, roomExample2, LocalDateTime.parse("2022-10-10 13:10:00", formatter), LocalDateTime.parse("2022-10-25 13:10:00", formatter));
         assertEquals(3, rentRepository.getSize());
 
@@ -123,6 +129,6 @@ public class RentRepositoryTest {
         assertEquals(3, rentRepository.getSize());
 
         rentManager.rentRoom(clientExample3, roomExample2, LocalDateTime.parse("2021-10-11 13:10:00", formatter), LocalDateTime.parse("2021-10-25 13:10:00", formatter));
-        assertEquals(3, rentRepository.getSize());
+        assertEquals(4, rentRepository.getSize());
     }
 }

@@ -2,9 +2,6 @@ package pl.nbd.hotel.rent;
 
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pl.nbd.hotel.client.Client;
 import pl.nbd.hotel.client.ClientRepository;
 import pl.nbd.hotel.client.type.ClientTypeName;
@@ -21,9 +18,9 @@ public class RentManager {
     private final ClientRepository clientRepository;
     private final RentRepository rentRepository;
 
-    public RentManager() {
-        this.rentRepository = new RentRepository();
-        this.clientRepository = new ClientRepository();
+    public RentManager(RentRepository rentRepository, ClientRepository clientRepository) {
+        this.rentRepository = rentRepository;
+        this.clientRepository = clientRepository;
     }
 
     public Rent rentRoom(Client client, Room room, LocalDateTime beginTime, LocalDateTime endTime) {
