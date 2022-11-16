@@ -57,7 +57,7 @@ public class ClientRepositoryTest {
     public void shouldAddClientToRepository() {
         assertEquals(2,clientRepository.getSize());
 
-        ClientManager clientManager = new ClientManager();
+        ClientManager clientManager = new ClientManager(clientRepository);
         clientManager.registerClient("Jan", "Nowak", "00230908071", new Address("Nowa", "3a", "Warszawa", "00-010"));
 
         assertEquals(3,clientRepository.getSize());
@@ -68,7 +68,7 @@ public class ClientRepositoryTest {
         assertEquals(2,clientRepository.getSize());
 
         Client client = clientRepository.findById("11111111110");
-        ClientManager clientManager = new ClientManager();
+        ClientManager clientManager = new ClientManager(clientRepository);
         clientManager.unregisterClient(client);
 
         assertEquals(1,clientRepository.getSize());

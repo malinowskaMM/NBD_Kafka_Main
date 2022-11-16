@@ -10,8 +10,8 @@ public class RoomManager {
     private final RoomRepository roomRepository;
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
-    public RoomManager() {
-        this.roomRepository = new RoomRepository();
+    public RoomManager(RoomRepository roomRepository) {
+        this.roomRepository = roomRepository;
     }
 
     public Room addShowerRoom(String roomNumber, Double basePrice, int roomCapacity, boolean withShelf) {

@@ -16,8 +16,8 @@ public class ClientManager {
     private final ClientRepository clientRepository;
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
-    public ClientManager() {
-        this.clientRepository = new ClientRepository();
+    public ClientManager(ClientRepository clientRepository) {
+        this.clientRepository = clientRepository;
     }
 
     public Client registerClient(String firstName, String lastName, String personalId, Address address) {

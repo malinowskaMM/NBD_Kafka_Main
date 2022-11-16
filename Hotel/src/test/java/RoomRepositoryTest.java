@@ -47,7 +47,7 @@ public class RoomRepositoryTest {
     public void shouldAddRoomToRepository() {
         assertEquals(2, roomRepository.getSize());
 
-        RoomManager roomManager = new RoomManager();
+        RoomManager roomManager = new RoomManager(roomRepository);
         roomManager.addBathRoom("112", 200.0, 2, bathType.JACUZZI);
 
 
