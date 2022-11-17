@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 
 public class RentRepositoryTest {
@@ -42,15 +42,13 @@ public class RentRepositoryTest {
         Room room = new BathRoom("3", 150.0, 2, bathType.SMALL);
         Room room1 = new BathRoom("4", 120.0, 1, bathType.SMALL);
 
-        rentRepository.save(new Rent(UUID.fromString("c9ba0eae-5084-11ed-bdc3-0242ac120002"), LocalDateTime.of(2022, 10, 18, 13, 10),
-                LocalDateTime.of(2022, 10, 20, 12, 0), client, room, 1000.0));
-        rentRepository.save(new Rent(UUID.fromString("c9ba0eae-5011-11fd-bdc3-0243ac120002"), LocalDateTime.of(2022, 10, 19, 13, 10),
-                LocalDateTime.of(2022, 10, 20, 12, 0), client1, room1, 800.0));
+        rentRepository.save(new Rent(UUID.fromString("c9ba0eae-5084-11ed-bdc3-0242ac120002"), LocalDateTime.of(2022, 10, 18, 13, 10), LocalDateTime.of(2022, 10, 20, 12, 0), client, room, 1000.0));
+        rentRepository.save(new Rent(UUID.fromString("c9ba0eae-5011-11fd-bdc3-0243ac120002"), LocalDateTime.of(2022, 10, 19, 13, 10), LocalDateTime.of(2022, 10, 20, 12, 0), client1, room1, 800.0));
 
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         roomExample = new BathRoom("3", 150.0, 2, bathType.SMALL);
-        clientExample = new Client("11111111111","imie", "nazwisko", new Address("ulica", "numer", "miasto", "11-111"), 0.0, new ClientType(ClientTypeName.DIAMOND, 1500));
+        clientExample = new Client("11111111111", "imie", "nazwisko", new Address("ulica", "numer", "miasto", "11-111"), 0.0, new ClientType(ClientTypeName.DIAMOND, 1500));
         rentExample = new Rent(UUID.fromString("c9ba0eae-5084-11ed-bdc3-0242ac120002"), LocalDateTime.parse("2022-10-18 13:10:00", formatter), LocalDateTime.parse("2022-10-20 12:00:00", formatter), clientExample, roomExample, 1000.0);
 
     }
@@ -59,7 +57,7 @@ public class RentRepositoryTest {
     public void shouldFindById() {
         String id = "c9ba0eae-5084-11ed-bdc3-0242ac120002";
         Rent rent = rentRepository.findById(id);
-        assertEquals(rentExample.getRentInfo(), rent.getRentInfo());
+        assertEquals(rentExample.rentInfoGet(), rent.rentInfoGet());
     }
 
     @Test
@@ -81,7 +79,7 @@ public class RentRepositoryTest {
     public void shouldAddRentToRepository() {
         assertEquals(2, rentRepository.getSize());
         Room roomExample2 = new ShowerRoom("3", 100.0, 1, false);
-        Client clientExample2 = new Client("11010000000","imie2", "nazwisko2", new Address("ulica2", "numer2", "miasto2", "00-111"), 0.0, new ClientType(ClientTypeName.DIAMOND, 15));
+        Client clientExample2 = new Client("11010000000", "imie2", "nazwisko2", new Address("ulica2", "numer2", "miasto2", "00-111"), 0.0, new ClientType(ClientTypeName.DIAMOND, 15));
 
 
         RentManager rentManager = new RentManager(rentRepository, clientRepository);
@@ -90,23 +88,10 @@ public class RentRepositoryTest {
     }
 
     @Test
-    public void shouldRemoveRentFromRepository() {
-        assertEquals(2, rentRepository.getSize());
-
-        Rent rent = rentRepository.findById("c9ba0eae-5084-11ed-bdc3-0242ac120002");
-        RentManager rentManager = new RentManager(rentRepository, clientRepository);
-        rentManager.endRoomRent(rent);
-
-        assertEquals(2, rentRepository.getSize());
-    }
-
-    @Test
     public void shouldNotPermitsRentSameRoomInSameDateSecondTime() {
         assertEquals(2, rentRepository.getSize());
         Room roomExample2 = new ShowerRoom("3", 100.0, 1, false);
-        Client clientExample2 = new Client("11010000000","imie2", "nazwisko2", new Address("ulica2", "numer2", "miasto2", "00-111"), 0.0, new ClientType(ClientTypeName.DIAMOND, 15));
-        Client clientExample3 = new Client("10000000000","imie3", "nazwisko3", new Address("ulica3", "numer3", "miasto3", "01-101"), 0.0, new ClientType(ClientTypeName.DIAMOND, 15));
-
+        Client clientExample2 = new Client("11010000000", "imie2", "nazwisko2", new Address("ulica2", "numer2", "miasto2", "00-111"), 0.0, new ClientType(ClientTypeName.DIAMOND, 15));
 
         RentManager rentManager = new RentManager(rentRepository, clientRepository);
         rentManager.rentRoom(clientExample2, roomExample2, LocalDateTime.parse("2022-10-10 13:10:00", formatter), LocalDateTime.parse("2022-10-25 13:10:00", formatter));
@@ -117,8 +102,8 @@ public class RentRepositoryTest {
     public void shouldNotAllowRentSameRoomConcurrent() {
         assertEquals(2, rentRepository.getSize());
         Room roomExample2 = new ShowerRoom("3", 100.0, 1, false);
-        Client clientExample2 = new Client("11010000000","imie2", "nazwisko2", new Address("ulica2", "numer2", "miasto2", "00-111"), 0.0, new ClientType(ClientTypeName.DIAMOND, 15));
-        Client clientExample3 = new Client("10000000000","imie3", "nazwisko3", new Address("ulica3", "numer3", "miasto3", "01-101"), 0.0, new ClientType(ClientTypeName.DIAMOND, 15));
+        Client clientExample2 = new Client("11010000000", "imie2", "nazwisko2", new Address("ulica2", "numer2", "miasto2", "00-111"), 0.0, new ClientType(ClientTypeName.DIAMOND, 15));
+        Client clientExample3 = new Client("10000000000", "imie3", "nazwisko3", new Address("ulica3", "numer3", "miasto3", "01-101"), 0.0, new ClientType(ClientTypeName.DIAMOND, 15));
 
 
         RentManager rentManager = new RentManager(rentRepository, clientRepository);
@@ -131,4 +116,50 @@ public class RentRepositoryTest {
         rentManager.rentRoom(clientExample3, roomExample2, LocalDateTime.parse("2021-10-11 13:10:00", formatter), LocalDateTime.parse("2021-10-25 13:10:00", formatter));
         assertEquals(4, rentRepository.getSize());
     }
+
+    @Test
+    public void shouldDeleteRentFromRepository() {
+        assertEquals(2, rentRepository.getSize());
+        Rent rent = rentRepository.findById("c9ba0eae-5084-11ed-bdc3-0242ac120002");
+        assertNotNull(rent);
+        rentRepository.removeById("c9ba0eae-5084-11ed-bdc3-0242ac120002");
+
+        assertEquals(1, rentRepository.getSize());
+    }
+
+    @Test
+    public void shouldRemoveRoomFromRepositoryManager() {
+        assertEquals(2, rentRepository.getSize());
+
+        Rent rent = rentRepository.findById("c9ba0eae-5084-11ed-bdc3-0242ac120002");
+        assertNotNull(rent);
+        RentManager rentManager = new RentManager(rentRepository, clientRepository);
+        rentManager.endRoomRent(rent);
+
+        assertEquals(1, rentRepository.getSize());
+    }
+
+    @Test
+    public void shouldUpdateRentFromRepository() {
+        assertEquals(2, rentRepository.getSize());
+        RentManager rentManager = new RentManager(rentRepository, clientRepository);
+        Rent rent1 = rentManager.getRent("c9ba0eae-5084-11ed-bdc3-0242ac120002");
+        rent1.setRentCost(500.);
+        rentRepository.update(rent1);
+        Rent rent2 = rentManager.getRent("c9ba0eae-5084-11ed-bdc3-0242ac120002");
+        assertEquals(rent1.rentInfoGet(), rent2.rentInfoGet());
+    }
+
+    @Test
+    public void shouldUpdateRentFromRepositoryManager() {
+        assertEquals(2, rentRepository.getSize());
+        RentManager rentManager = new RentManager(rentRepository, clientRepository);
+        Rent rent1 = rentManager.getRent("c9ba0eae-5084-11ed-bdc3-0242ac120002");
+        rentManager.updateRent("c9ba0eae-5084-11ed-bdc3-0242ac120002", 5.);
+        Rent rent2 = rentManager.getRent("c9ba0eae-5084-11ed-bdc3-0242ac120002");
+        assertNotEquals(rent1.rentInfoGet(), rent2.rentInfoGet());
+        rent1.setRentCost(5.);
+        assertEquals(rent1.rentInfoGet(), rent2.rentInfoGet());
+    }
+
 }

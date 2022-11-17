@@ -2,11 +2,16 @@ package pl.nbd.hotel.room;
 
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import pl.nbd.hotel.client.Client;
 
 import java.util.List;
 import java.util.function.Predicate;
 
 public class RoomManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Slf4j.class);
     private final RoomRepository roomRepository;
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
@@ -20,7 +25,11 @@ public class RoomManager {
             if (roomRepository.findById(room.roomNumber) == null) {
                 final Room savedRoom = roomRepository.save(room);
                 return savedRoom;
-                }
+                } else {
+                LOGGER.warn("Room {} already exists in the database", room.getRoomNumber());
+            }
+        } else {
+            LOGGER.warn("Room {} validation failed", room.getRoomNumber());
         }
         return null;
     }
@@ -31,7 +40,23 @@ public class RoomManager {
             if (roomRepository.findById(room.roomNumber) == null) {
                 final Room savedRoom = roomRepository.save(room);
                 return savedRoom;
+            } else {
+                LOGGER.warn("Room {} already exists in the database", room.getRoomNumber());
             }
+        } else {
+            LOGGER.warn("Rent {} validation failed", room.getRoomNumber());
+        }
+        return null;
+    }
+
+    public Room updateRoom(String roomNumber, Double price) {
+        final Room room1 = roomRepository.findById(roomNumber);
+        if(room1 != null) {
+            room1.setPrice(price);
+            roomRepository.update(room1);
+            return roomRepository.findById(roomNumber);
+        } else {
+            LOGGER.warn("Room {} does not exist in the database.", roomNumber);
         }
         return null;
     }
@@ -41,9 +66,15 @@ public class RoomManager {
             final Room room1 = roomRepository.findById(room.getRoomNumber());
             if(room1 != null) {
                 roomRepository.removeById(room1.getRoomNumber());
+            } else {
+                LOGGER.warn("Room {} does not exist in the database.", room.getRoomNumber());
             }
+        } else {
+            LOGGER.error("Room {} validation failed.", room.getRoomNumber());
         }
     }
+
+
 
     public Room getRoom(String id) {
         return roomRepository.findById(id);

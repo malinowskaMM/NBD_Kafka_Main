@@ -5,8 +5,13 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.CreateCollectionOptions;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 import com.mongodb.client.model.ValidationOptions;
+import org.bson.BsonDocument;
+import org.bson.BsonDocumentWriter;
 import org.bson.Document;
+import org.bson.codecs.Codec;
+import org.bson.codecs.EncoderContext;
 import org.bson.conversions.Bson;
 import pl.nbd.hotel.db.AbstractMongoRepository;
 import pl.nbd.hotel.repository.Repository;
@@ -78,7 +83,7 @@ public class ClientRepository extends AbstractMongoRepository implements Reposit
     public String getReport() {
         final StringBuilder description = new StringBuilder();
         for (Client c: findAll()) {
-            description.append(c.getClientInfo());
+            description.append(c.clientInfoGet());
             description.append(", ");
         }
         return description.toString();
@@ -93,6 +98,13 @@ public class ClientRepository extends AbstractMongoRepository implements Reposit
     public void removeById(String id) {
         Bson filter = Filters.eq("personalId", id);
         clientMongoCollection.deleteOne(filter);
+    }
+
+    public void update(Client client) {
+        Codec<Client> clientCodec = clientMongoCollection.getCodecRegistry().get(Client.class);
+        BsonDocument bsonDocument = new BsonDocument();
+        clientCodec.encode(new BsonDocumentWriter(bsonDocument), client, EncoderContext.builder().build());
+        clientMongoCollection.replaceOne(Filters.eq("personalId", client.getPersonalId()), client);
     }
 
     @Override

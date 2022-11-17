@@ -23,7 +23,7 @@ public class ShowerRoom extends Room {
     @BsonProperty(value = "withShelf")
     Boolean withShelf;
 
-    public String getRoomInfo() {
-        return super.getRoomInfo().concat("with shelf ").concat(String.valueOf(withShelf));
+    public String roomInfoGet() {
+        return super.roomInfoGet().concat("with shelf ").concat(String.valueOf(withShelf));
     }
 }

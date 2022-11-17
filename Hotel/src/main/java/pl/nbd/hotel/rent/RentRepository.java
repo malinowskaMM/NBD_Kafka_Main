@@ -3,7 +3,12 @@ package pl.nbd.hotel.rent;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import org.bson.BsonDocument;
+import org.bson.BsonDocumentWriter;
+import org.bson.codecs.Codec;
+import org.bson.codecs.EncoderContext;
 import org.bson.conversions.Bson;
+import pl.nbd.hotel.client.Client;
 import pl.nbd.hotel.db.AbstractMongoRepository;
 import pl.nbd.hotel.repository.Repository;
 
@@ -50,7 +55,7 @@ public class RentRepository extends AbstractMongoRepository implements Repositor
     public String getReport() {
         final StringBuilder description = new StringBuilder();
         for (Rent r : findAll()) {
-            description.append(r.getRentInfo());
+            description.append(r.rentInfoGet());
             description.append(", ");
         }
         return description.toString();
@@ -63,7 +68,7 @@ public class RentRepository extends AbstractMongoRepository implements Repositor
 
     @Override
     public void removeById(String id) {
-        Bson filter = Filters.eq("id", id);
+        Bson filter = Filters.eq("_id", UUID.fromString(id));
         rentMongoCollection.deleteOne(filter);
     }
 
@@ -81,5 +86,12 @@ public class RentRepository extends AbstractMongoRepository implements Repositor
     @Override
     public void close() throws Exception {
 
+    }
+
+    public void update(Rent rent) {
+        Codec<Rent> clientCodec = rentMongoCollection.getCodecRegistry().get(Rent.class);
+        BsonDocument bsonDocument = new BsonDocument();
+        clientCodec.encode(new BsonDocumentWriter(bsonDocument), rent, EncoderContext.builder().build());
+        rentMongoCollection.replaceOne(Filters.eq("_id", rent.getId()), rent);
     }
 }

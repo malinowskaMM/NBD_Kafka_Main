@@ -20,7 +20,7 @@ public class BathRoom extends Room {
     @BsonProperty(value = "bathType")
     bathType bathType;
 
-    public String getRoomInfo() {
-        return super.getRoomInfo().concat(" ").concat(bathType.name());
+    public String roomInfoGet() {
+        return super.roomInfoGet().concat(" ").concat(bathType.name());
     }
 }

@@ -3,6 +3,10 @@ package pl.nbd.hotel.room;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import org.bson.BsonDocument;
+import org.bson.BsonDocumentWriter;
+import org.bson.codecs.Codec;
+import org.bson.codecs.EncoderContext;
 import org.bson.conversions.Bson;
 import pl.nbd.hotel.db.AbstractMongoRepository;
 import pl.nbd.hotel.repository.Repository;
@@ -47,7 +51,7 @@ public class RoomRepository extends AbstractMongoRepository implements Repositor
     public String getReport() {
         final StringBuilder description = new StringBuilder();
         for (Room r: findAll()) {
-            description.append(r.getRoomInfo());
+            description.append(r.roomInfoGet());
             description.append(", ");
         }
         return description.toString();
@@ -62,6 +66,13 @@ public class RoomRepository extends AbstractMongoRepository implements Repositor
     public void removeById(String id) {
         Bson filter = Filters.eq("_id", id);
         roomMongoCollection.findOneAndDelete(filter);
+    }
+
+    public void update(Room room) {
+        Codec<Room> clientCodec = roomMongoCollection.getCodecRegistry().get(Room.class);
+        BsonDocument bsonDocument = new BsonDocument();
+        clientCodec.encode(new BsonDocumentWriter(bsonDocument), room, EncoderContext.builder().build());
+        roomMongoCollection.replaceOne(Filters.eq("_id", room.getRoomNumber()), room);
     }
 
     @Override
