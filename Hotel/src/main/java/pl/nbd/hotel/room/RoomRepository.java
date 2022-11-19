@@ -8,14 +8,14 @@ import org.bson.BsonDocumentWriter;
 import org.bson.codecs.Codec;
 import org.bson.codecs.EncoderContext;
 import org.bson.conversions.Bson;
-import pl.nbd.hotel.db.AbstractMongoRepository;
+import pl.nbd.hotel.db.AbstractRedisRepository;
 import pl.nbd.hotel.repository.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class RoomRepository extends AbstractMongoRepository implements Repository<Room> {
+public class RoomRepository extends AbstractRedisRepository implements Repository<Room> {
 
     public RoomRepository() {
         super.initDbConnection();
