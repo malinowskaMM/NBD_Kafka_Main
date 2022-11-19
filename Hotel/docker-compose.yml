@@ -18,6 +18,30 @@ services:
       interval: 10s
       timeout: 2s
       retries: 5
+  redis-cluster_1:
+    image: docker.io/bitnami/redis-cluster:7.0
+    ports:
+      - "7001:7001"
+      - "17001:17001"
+    environment:
+      - REDIS_PORT_NUMBER=7001
+      - REDIS_PASSWORD=master123
+      - REDIS_NODES=redis-cluster_1
+      - REDIS_CLUSTER_ANNOUNCE_PORT=7001
+      - REDIS_CLUSTER_ANNOUNCE_IP=192.168.1.194
+      - REDIS_CLUSTER_BUS_ANNOUNCE_PORT=17001
+      - REDIS_CLUSTER_DYNAMIC_IPS=no
+    volumes:
+      - type: bind
+        source: ./modules
+        target: /opt/bitnami/redis/modules
+      - type: bind
+        source: ./modules.overrides.conf
+        target:  /opt/bitnami/redis/mounted-etc/overrides.conf
+    networks:
+      redisnetwork:
+        ipv4_address: 172.27.0.101
+
 
   mongoinit:
     build: .
@@ -35,5 +59,27 @@ services:
       rs.initiate();
       '
 
+  redis-cluster-init:
+    image: docker.io/bitnami/redis-cluster:7.0
+    container_name: redis-cluster-init
+    restart: 'no'
+    depends_on:
+      - redis-cluster_1
+    entrypoint: []
+    command:
+      - /bin/bash
+      - -c
+      - redis-cli -a master123 --cluster create 192.168.1.194:7001 --cluster-replicas 1 --cluster-yes
+    networks:
+      redisnetwork:
+        ipv4_address: 172.27.0.100
+
+
 networks:
+  redisnetwork:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.27.0.0/16
   mongonet: {}
