@@ -1,5 +1,7 @@
 package pl.nbd.hotel.client;
 
+import jakarta.json.bind.annotation.JsonbCreator;
+import jakarta.json.bind.annotation.JsonbProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
@@ -16,13 +18,20 @@ import java.io.Serializable;
 public class Client implements Serializable {
 
     @BsonCreator
-    public Client(@BsonProperty("personalId") String personalId,
-                  @BsonProperty("firstName") String firstName,
-                  @BsonProperty("lastName") String lastName,
-                  @BsonProperty("address") Address address,
-                  @BsonProperty("moneySpent") Double moneySpent,
-                  @BsonProperty("clientType") ClientType clientType
-                  ) {
+    @JsonbCreator
+    public Client(@BsonProperty("personalId") @JsonbProperty("personalId")
+                          String personalId,
+                  @BsonProperty("firstName") @JsonbProperty("firstName")
+                          String firstName,
+                  @BsonProperty("lastName") @JsonbProperty("lastName")
+                          String lastName,
+                  @BsonProperty("address") @JsonbProperty("address")
+                          Address address,
+                  @BsonProperty("moneySpent") @JsonbProperty("moneySpent")
+                          Double moneySpent,
+                  @BsonProperty("clientType") @JsonbProperty("clientType")
+                          ClientType clientType
+    ) {
         super();
         this.personalId = personalId;
         this.firstName = firstName;
@@ -33,11 +42,13 @@ public class Client implements Serializable {
     }
 
     @BsonProperty("personalId")
+    @JsonbProperty("personalId")
     @Size(min = 11, max = 11)
     @NotNull
     String personalId;
 
     @BsonProperty("firstName")
+    @JsonbProperty("firstName")
     @Size(max = 35)
     @NotNull
     String firstName;
@@ -45,18 +56,22 @@ public class Client implements Serializable {
     @NotNull
     @Size(max = 35)
     @BsonProperty("lastName")
+    @JsonbProperty("lastName")
     String lastName;
 
     @NotNull
     @BsonProperty("address")
+    @JsonbProperty("address")
     Address address;
 
     @NotNull
     @PositiveOrZero
     @BsonProperty("moneySpent")
+    @JsonbProperty("moneySpent")
     Double moneySpent;
 
     @BsonProperty("clientType")
+    @JsonbProperty("clientType")
     ClientType clientType;
 
     public String clientInfoGet() {
