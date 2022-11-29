@@ -1,5 +1,7 @@
 package pl.nbd.hotel.room;
 
+import jakarta.json.bind.annotation.JsonbCreator;
+import jakarta.json.bind.annotation.JsonbProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -18,9 +20,10 @@ import java.io.Serializable;
 public abstract class Room implements Serializable {
 
     @BsonCreator
-    public Room(@BsonProperty("roomNumber") String roomNumber,
-                @BsonProperty("price") Double price,
-                @BsonProperty("roomCapacity") Integer roomCapacity) {
+    @JsonbCreator
+    public Room(@BsonProperty("roomNumber") @JsonbProperty("roomNumber") String roomNumber,
+                @BsonProperty("price") @JsonbProperty("price") Double price,
+                @BsonProperty("roomCapacity") @JsonbProperty("roomCapacity")Integer roomCapacity) {
         this.roomNumber = roomNumber;
         this.price = price;
         this.roomCapacity = roomCapacity;
@@ -28,16 +31,19 @@ public abstract class Room implements Serializable {
 
     @BsonId
     @Size(max = 12)
+    @JsonbProperty("roomNumber")
     String roomNumber;
 
     @NotNull
     @PositiveOrZero
     @BsonProperty("price")
+    @JsonbProperty("price")
     Double price;
 
     @NotNull
     @Positive
     @BsonProperty("roomCapacity")
+    @JsonbProperty("roomCapacity")
     Integer roomCapacity;
 
     public String roomInfoGet() {
