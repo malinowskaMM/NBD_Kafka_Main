@@ -1,6 +1,7 @@
 import org.junit.Before;
 import org.junit.Test;
 import pl.nbd.hotel.room.*;
+import pl.nbd.hotel.room.cache.RepositoryDecorator;
 
 import java.util.List;
 
@@ -8,13 +9,18 @@ import static org.junit.Assert.*;
 
 public class RoomRepositoryTest {
     RoomRepository roomRepository;
+    RepositoryDecorator repositoryDecorator;
+    Room roomExample;
 
     @Before
     public void init() {
         roomRepository = new RoomRepository();
         roomRepository.mongoDatabase.drop();
+        repositoryDecorator = new RepositoryDecorator(roomRepository);
         roomRepository.save(new BathRoom("1", 150.0, 2, bathType.SMALL));
         roomRepository.save(new ShowerRoom("2", 150.0, 1, true));
+        roomExample = new BathRoom("3", 150.0, 2, bathType.SMALL);
+        repositoryDecorator.save(roomExample);
     }
 
     @Test
@@ -103,5 +109,40 @@ public class RoomRepositoryTest {
 
         assertEquals(1, roomRepository.getSize());
     }
+
+    @Test
+    public void shouldGetItemFromCache() {
+        Room room = repositoryDecorator.findById("3");
+        assertNotNull(room);
+        assertEquals(roomExample.getRoomNumber(), room.getRoomNumber());
+        assertEquals(roomExample.getRoomCapacity(), room.getRoomCapacity());
+        assertEquals(roomExample.getPrice(), room.getPrice());
+
+        assertNotNull(roomRepository.findById("3"));
+    }
+
+    @Test
+    public void shouldRemoveItemFromCache() {
+        assertNotNull(roomRepository.findById("2"));
+        assertNotNull(repositoryDecorator.findById("2"));
+
+        repositoryDecorator.removeById("2");
+
+        assertNull(roomRepository.findById("2"));
+        assertNull(repositoryDecorator.findById("2"));
+    }
+
+    @Test
+    public void shouldGetFromDBIfConnectionWithCacheRefused() {
+        assertNotNull(roomRepository.findById("2"));
+        assertNotNull(repositoryDecorator.findById("2"));
+        repositoryDecorator.getPool().getPool().close();
+
+        repositoryDecorator.removeById("2");
+
+        assertNull(roomRepository.findById("2"));
+        assertNull(repositoryDecorator.findById("2"));
+    }
+
 
 }
