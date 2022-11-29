@@ -1,7 +1,5 @@
 package pl.nbd.hotel.rent;
 
-import jakarta.json.bind.annotation.JsonbCreator;
-import jakarta.json.bind.annotation.JsonbProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
@@ -20,31 +18,25 @@ import java.util.UUID;
 public class Rent implements Serializable {
 
     @BsonId
-    @JsonbProperty("_id")
     UUID id;
 
     @NotNull
     @BsonProperty("beginTime")
-    @JsonbProperty("beginTime")
     LocalDateTime beginTime;
 
     @NotNull
     @BsonProperty("endTime")
-    @JsonbProperty("endTime")
     LocalDateTime endTime;
 
     @PositiveOrZero
     @NotNull
     @BsonProperty("rentCost")
-    @JsonbProperty("rentCost")
     Double rentCost;
 
     @BsonProperty("client")
-    @JsonbProperty("client")
     Client client;
 
     @BsonProperty(value = "room", useDiscriminator = true)
-    @JsonbProperty("room")
     Room room;
 
     public String rentInfoGet() {
@@ -52,20 +44,13 @@ public class Rent implements Serializable {
     }
 
     @BsonCreator
-    @JsonbCreator
     public Rent(
-            @BsonId @JsonbProperty("_id")
-                    UUID id,
-            @BsonProperty("beginTime") @JsonbProperty("beginTime")
-                    LocalDateTime beginTime,
-            @BsonProperty("endTime") @JsonbProperty("endTime")
-                    LocalDateTime endTime,
-            @BsonProperty("client") @JsonbProperty("client")
-                    Client client,
-            @BsonProperty("room") @JsonbProperty("room")
-                    Room room,
-            @BsonProperty("rentCost") @JsonbProperty("rentCost")
-                    Double rentCost) {
+            @BsonId UUID id,
+                @BsonProperty("beginTime") LocalDateTime beginTime,
+                @BsonProperty("endTime") LocalDateTime endTime,
+                @BsonProperty("client") Client client,
+                @BsonProperty("room") Room room,
+                @BsonProperty("rentCost") Double rentCost) {
         this.id = id;
         this.beginTime = beginTime;
         this.endTime = endTime;
