@@ -152,5 +152,21 @@ public class RoomRepositoryTest {
         repositoryDecorator.findAll();
     }
 
+    @Test
+    public void shouldFlushItemFromCache() {
+        assertNotNull(roomRepository.findById("3"));
+        assertNotNull(repositoryDecorator.findById("3"));
+        repositoryDecorator.flush();
+        assertEquals(0, repositoryDecorator.getSize());
+
+    }
+
+    @Test
+    public void shouldCloseConnection() {
+        assertEquals(1, repositoryDecorator.getSize());
+        repositoryDecorator.closeRedisConnection();
+        assertNotNull(repositoryDecorator.findById("3"));
+    }
+
 
 }
