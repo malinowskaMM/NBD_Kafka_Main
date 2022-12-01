@@ -5,7 +5,6 @@ import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.nbd.hotel.client.Client;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -19,8 +18,8 @@ public class RoomManager {
         this.roomRepository = roomRepository;
     }
 
-    public Room addShowerRoom(String roomNumber, Double basePrice, int roomCapacity, boolean withShelf) {
-        final Room room = new ShowerRoom(roomNumber, basePrice, roomCapacity, withShelf);
+    public Room addShowerRoom(String roomNumber, Double basePrice, int roomCapacity) {
+        final Room room = new Room(roomNumber, basePrice, roomCapacity);
         if (validator.validate(room).size() == 0) {
             if (roomRepository.findById(room.roomNumber) == null) {
                 final Room savedRoom = roomRepository.save(room);
@@ -34,8 +33,8 @@ public class RoomManager {
         return null;
     }
 
-    public Room addBathRoom(String roomNumber, Double basePrice, int roomCapacity, bathType bathType){
-        final Room room = new BathRoom(roomNumber, basePrice, roomCapacity, bathType);
+    public Room addBathRoom(String roomNumber, Double basePrice, int roomCapacity){
+        final Room room = new Room(roomNumber, basePrice, roomCapacity);
         if (validator.validate(room).size() == 0) {
             if (roomRepository.findById(room.roomNumber) == null) {
                 final Room savedRoom = roomRepository.save(room);

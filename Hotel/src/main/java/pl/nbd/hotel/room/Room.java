@@ -16,8 +16,7 @@ import java.io.Serializable;
 
 @Getter
 @Setter
-@BsonDiscriminator(key="_cls", value = "abstract")
-public abstract class Room implements Serializable {
+public class Room implements Serializable {
 
     @BsonCreator
     @JsonbCreator

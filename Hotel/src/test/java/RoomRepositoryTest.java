@@ -17,16 +17,16 @@ public class RoomRepositoryTest {
         roomRepository = new RoomRepository();
         roomRepository.mongoDatabase.drop();
         repositoryDecorator = new RepositoryDecorator(roomRepository);
-        roomRepository.save(new BathRoom("1", 150.0, 2, bathType.SMALL));
-        roomRepository.save(new ShowerRoom("2", 150.0, 1, true));
-        roomExample = new BathRoom("3", 150.0, 2, bathType.SMALL);
+        roomRepository.save(new Room("1", 150.0, 2));
+        roomRepository.save(new Room("2", 150.0, 1));
+        roomExample = new Room("3", 150.0, 2);
         repositoryDecorator.save(roomExample);
     }
 
     @Test
     public void shouldFindById() {
         Room room = roomRepository.findById("1");
-        String info = "1".concat(" 150.0 2 SMALL");
+        String info = "1".concat(" 150.0 2");
         assertNotNull(room);
         assertEquals(info, room.roomInfoGet());
     }
@@ -46,33 +46,33 @@ public class RoomRepositoryTest {
     @Test
     public void shouldReturnListSizeEqualsTwo() {
         List<Room> rooms = roomRepository.findAll();
-        assertEquals(2, rooms.size());
+        assertEquals(3, rooms.size());
     }
 
     @Test
     public void shouldAddRoomToRepository() {
-        assertEquals(2, roomRepository.getSize());
+        assertEquals(3, roomRepository.getSize());
 
         RoomManager roomManager = new RoomManager(roomRepository);
-        roomManager.addBathRoom("112", 200.0, 2, bathType.JACUZZI);
+        roomManager.addBathRoom("112", 200.0, 2);
 
-        assertEquals(3, roomRepository.getSize());
+        assertEquals(4, roomRepository.getSize());
     }
 
     @Test
     public void shouldRemoveRoomFromRepository() {
-        assertEquals(2, roomRepository.getSize());
+        assertEquals(3, roomRepository.getSize());
 
         Room room = roomRepository.findById("1");
         assertNotNull(room);
         roomRepository.removeById("1");
 
-        assertEquals(1, roomRepository.getSize());
+        assertEquals(2, roomRepository.getSize());
     }
 
     @Test
     public void shouldUpdateRoomFromRepository() {
-        assertEquals(2, roomRepository.getSize());
+        assertEquals(3, roomRepository.getSize());
 
         Room room = roomRepository.findById("1");
         assertNotNull(room);
@@ -85,7 +85,7 @@ public class RoomRepositoryTest {
 
     @Test
     public void shouldUpdateRoomFromRepositoryManager() {
-        assertEquals(2, roomRepository.getSize());
+        assertEquals(3, roomRepository.getSize());
         RoomManager roomManager = new RoomManager(roomRepository);
         roomManager.getRoom("1");
         Room room = roomManager.getRoom("1");
@@ -101,13 +101,13 @@ public class RoomRepositoryTest {
 
     @Test
     public void shouldRemoveRoomFromRepositoryManager() {
-        assertEquals(2, roomRepository.getSize());
+        assertEquals(3, roomRepository.getSize());
 
         Room room = roomRepository.findById("1");
         RoomManager roomManager = new RoomManager(roomRepository);
         roomManager.removeRoom(room);
 
-        assertEquals(1, roomRepository.getSize());
+        assertEquals(2, roomRepository.getSize());
     }
 
     @Test
@@ -142,6 +142,11 @@ public class RoomRepositoryTest {
 
         assertNull(roomRepository.findById("2"));
         assertNull(repositoryDecorator.findById("2"));
+    }
+
+    @Test
+    public void flushCache() {
+
     }
 
 

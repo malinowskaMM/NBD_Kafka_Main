@@ -39,15 +39,15 @@ public class RentRepositoryTest {
         clientRepository.save(client);
         clientRepository.save(client1);
 
-        Room room = new BathRoom("3", 150.0, 2, bathType.SMALL);
-        Room room1 = new BathRoom("4", 120.0, 1, bathType.SMALL);
+        Room room = new Room("3", 150.0, 2);
+        Room room1 = new Room("4", 120.0, 1);
 
         rentRepository.save(new Rent(UUID.fromString("c9ba0eae-5084-11ed-bdc3-0242ac120002"), LocalDateTime.of(2022, 10, 18, 13, 10), LocalDateTime.of(2022, 10, 20, 12, 0), client, room, 1000.0));
         rentRepository.save(new Rent(UUID.fromString("c9ba0eae-5011-11fd-bdc3-0243ac120002"), LocalDateTime.of(2022, 10, 19, 13, 10), LocalDateTime.of(2022, 10, 20, 12, 0), client1, room1, 800.0));
 
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        roomExample = new BathRoom("3", 150.0, 2, bathType.SMALL);
+        roomExample = new Room("3", 150.0, 2);
         clientExample = new Client("11111111111", "imie", "nazwisko", new Address("ulica", "numer", "miasto", "11-111"), 0.0, new ClientType(ClientTypeName.DIAMOND, 1500));
         rentExample = new Rent(UUID.fromString("c9ba0eae-5084-11ed-bdc3-0242ac120002"), LocalDateTime.parse("2022-10-18 13:10:00", formatter), LocalDateTime.parse("2022-10-20 12:00:00", formatter), clientExample, roomExample, 1000.0);
 
@@ -78,7 +78,7 @@ public class RentRepositoryTest {
     @Test
     public void shouldAddRentToRepository() {
         assertEquals(2, rentRepository.getSize());
-        Room roomExample2 = new ShowerRoom("3", 100.0, 1, false);
+        Room roomExample2 = new Room("3", 100.0, 1);
         Client clientExample2 = new Client("11010000000", "imie2", "nazwisko2", new Address("ulica2", "numer2", "miasto2", "00-111"), 0.0, new ClientType(ClientTypeName.DIAMOND, 15));
 
 
@@ -90,7 +90,7 @@ public class RentRepositoryTest {
     @Test
     public void shouldNotPermitsRentSameRoomInSameDateSecondTime() {
         assertEquals(2, rentRepository.getSize());
-        Room roomExample2 = new ShowerRoom("3", 100.0, 1, false);
+        Room roomExample2 = new Room("3", 100.0, 1);
         Client clientExample2 = new Client("11010000000", "imie2", "nazwisko2", new Address("ulica2", "numer2", "miasto2", "00-111"), 0.0, new ClientType(ClientTypeName.DIAMOND, 15));
 
         RentManager rentManager = new RentManager(rentRepository, clientRepository);
@@ -101,7 +101,7 @@ public class RentRepositoryTest {
     @Test
     public void shouldNotAllowRentSameRoomConcurrent() {
         assertEquals(2, rentRepository.getSize());
-        Room roomExample2 = new ShowerRoom("3", 100.0, 1, false);
+        Room roomExample2 = new Room("3", 100.0, 1);
         Client clientExample2 = new Client("11010000000", "imie2", "nazwisko2", new Address("ulica2", "numer2", "miasto2", "00-111"), 0.0, new ClientType(ClientTypeName.DIAMOND, 15));
         Client clientExample3 = new Client("10000000000", "imie3", "nazwisko3", new Address("ulica3", "numer3", "miasto3", "01-101"), 0.0, new ClientType(ClientTypeName.DIAMOND, 15));
 
