@@ -6,10 +6,13 @@ import pl.nbd.hotel.db.AbstractRedisRepository;
 import pl.nbd.hotel.repository.Repository;
 import pl.nbd.hotel.room.Room;
 import pl.nbd.hotel.room.RoomRepository;
+import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 
@@ -29,7 +32,6 @@ public class RepositoryDecorator extends AbstractRedisRepository implements Repo
         try{
             return jsonb.fromJson(pool.get("room" + id), Room.class);
         } catch (JedisException | NullPointerException e) {
-            e.printStackTrace();
             return roomRepository.findById(id);
         }
     }
@@ -47,22 +49,34 @@ public class RepositoryDecorator extends AbstractRedisRepository implements Repo
 
     @Override
     public List<Room> find(Predicate<Room> predicate) {
-        return null;
+        return findAll().stream().filter(predicate).toList();
     }
 
     @Override
     public List<Room> findAll() {
-        return null;
+        Set<String> keys = pool.keys("room*");
+        List<Room> rooms = new ArrayList<>();
+        keys.forEach(obj -> rooms.add(getRoom(obj)));
+        return rooms;
+    }
+
+    private Room getRoom(String key) {
+        return jsonb.fromJson(pool.get(key), Room.class);
     }
 
     @Override
     public String getReport() {
-        return null;
+        final StringBuilder description = new StringBuilder();
+        for (Room r: findAll()) {
+            description.append(r.roomInfoGet());
+            description.append(", ");
+        }
+        return description.toString();
     }
 
     @Override
     public int getSize() {
-        return 0;
+        return findAll().size();
     }
 
     @Override
@@ -77,7 +91,8 @@ public class RepositoryDecorator extends AbstractRedisRepository implements Repo
     }
 
     public void flush() {
-        Jedis jedis = new Jedis();
-        jedis.flushAll();
+        Set<String> keys = pool.keys("room*");
+        keys.forEach(obj -> pool.del(obj));
+
     }
 }

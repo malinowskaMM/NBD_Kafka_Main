@@ -17,6 +17,7 @@ public class RoomRepositoryTest {
         roomRepository = new RoomRepository();
         roomRepository.mongoDatabase.drop();
         repositoryDecorator = new RepositoryDecorator(roomRepository);
+        repositoryDecorator.flush();
         roomRepository.save(new Room("1", 150.0, 2));
         roomRepository.save(new Room("2", 150.0, 1));
         roomExample = new Room("3", 150.0, 2);
@@ -146,7 +147,9 @@ public class RoomRepositoryTest {
 
     @Test
     public void flushCache() {
-
+        Room room = new Room("12", 120.0, 1);
+        repositoryDecorator.save(room);
+        repositoryDecorator.findAll();
     }
 
 
