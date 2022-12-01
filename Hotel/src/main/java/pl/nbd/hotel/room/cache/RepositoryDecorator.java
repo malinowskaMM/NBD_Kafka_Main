@@ -20,15 +20,16 @@ public class RepositoryDecorator extends AbstractRedisRepository implements Repo
 
     public RepositoryDecorator(RoomRepository roomRepository) {
         super.initRedisConnection();
-        jsonb = JsonbBuilder.create();
+        this.jsonb = JsonbBuilder.create();
         this.roomRepository = roomRepository;
     }
 
     @Override
     public Room findById(String id) {
         try{
-            return jsonb.fromJson(pool.get("room:" + id), Room.class);
+            return jsonb.fromJson(pool.get("room" + id), Room.class);
         } catch (JedisException | NullPointerException e) {
+            e.printStackTrace();
             return roomRepository.findById(id);
         }
     }
@@ -36,8 +37,8 @@ public class RepositoryDecorator extends AbstractRedisRepository implements Repo
     @Override
     public Room save(Room object) {
         try {
-            pool.jsonSet("room:" + object.getRoomNumber(), jsonb.toJson(object, Room.class));
-            pool.expire("room:" + object.getRoomNumber(), 1200);
+            pool.set("room" + object.getRoomNumber(), jsonb.toJson(object, Room.class));
+            pool.expire("room" + object.getRoomNumber(), 1200);
             return roomRepository.save(object);
         } catch (JedisException e) {
             return roomRepository.save(object);
