@@ -90,8 +90,7 @@ public class RepositoryDecorator extends AbstractRedisRepository implements Repo
     }
 
     public void flush() {
-        Set<String> keys = pool.keys("room*");
+        Set<String> keys = pool.keys("*");
         keys.forEach(obj -> pool.del(obj));
-
     }
 }
