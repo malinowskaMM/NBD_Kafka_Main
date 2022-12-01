@@ -69,7 +69,7 @@ public class RepositoryDecorator extends AbstractRedisRepository implements Repo
         try {
         pool.del("room"+id);
         roomRepository.removeById(id);
-        } catch (JedisException | NullPointerException e) {
+        } catch (JedisException e) {
             System.out.println("TU");
             roomRepository.removeById(id);
         }

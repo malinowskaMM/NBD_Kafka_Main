@@ -136,7 +136,7 @@ public class RoomRepositoryTest {
     public void shouldGetFromDBIfConnectionWithCacheRefused() {
         assertNotNull(roomRepository.findById("2"));
         assertNotNull(repositoryDecorator.findById("2"));
-        repositoryDecorator.getPool().getPool().close();
+        repositoryDecorator.closeRedisConnection();
 
         repositoryDecorator.removeById("2");
 

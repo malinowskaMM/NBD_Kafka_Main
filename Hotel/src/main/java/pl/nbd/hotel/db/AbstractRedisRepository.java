@@ -6,16 +6,15 @@ import redis.clients.jedis.JedisClientConfig;
 import redis.clients.jedis.JedisPooled;
 
 public class AbstractRedisRepository {
-    protected JedisPooled pool;
+    protected static JedisPooled pool;
 
     public void initRedisConnection() {
-        JedisClientConfig clientConfig = DefaultJedisClientConfig.builder()
-                .password("master123")
-                .build();
+        JedisClientConfig clientConfig = DefaultJedisClientConfig.builder().build();
         pool = new JedisPooled(new HostAndPort("localhost", 7001), clientConfig);
     }
 
-    public JedisPooled getPool() {
-        return pool;
+    public void closeRedisConnection() {
+        pool.getPool().close();
+        //pool = null;
     }
 }
