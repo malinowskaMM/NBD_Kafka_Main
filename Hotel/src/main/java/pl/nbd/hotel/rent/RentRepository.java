@@ -3,6 +3,9 @@ package pl.nbd.hotel.rent;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.errors.TopicExistsException;
 import org.bson.BsonDocument;
 import org.bson.BsonDocumentWriter;
 import org.bson.codecs.Codec;
@@ -10,20 +13,49 @@ import org.bson.codecs.EncoderContext;
 import org.bson.conversions.Bson;
 import pl.nbd.hotel.client.Client;
 import pl.nbd.hotel.db.AbstractMongoRepository;
+import pl.nbd.hotel.db.Producer;
+import pl.nbd.hotel.db.Topics;
 import pl.nbd.hotel.repository.Repository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.function.Predicate;
+
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static pl.nbd.hotel.db.Producer.getProducer;
 
 public class RentRepository extends AbstractMongoRepository implements Repository<Rent> {
 
     public RentRepository() {
         super.initDbConnection();
+        //Topics.createTopic();
         this.rentMongoCollection = mongoDatabase.getCollection("rents", Rent.class);
+        //this.kafkaRentCollection = mongoDatabase.getCollection("kafkaRents", ProducerRecord.class);
+        Producer.initProducer();
     }
+
+    public void send(Rent rent) {
+        try {
+            ProducerRecord<UUID, String> record = new ProducerRecord<>(Topics.CLIENT_TOPIC,
+                    rent.getId(), rent.rentInfoGet());
+            Future<RecordMetadata> sent = getProducer().send(record);
+            RecordMetadata recordMetadata = sent.get();
+            //kafkaRentCollection.insertOne(record);
+        } catch (ExecutionException ee) {
+            System.out.println(ee.getCause());
+            assertThat(ee.getCause(), is(instanceOf(TopicExistsException.class)));
+        } catch (InterruptedException ie) {
+            System.out.println(ie.getCause());
+        }
+    }
+
+    //private final MongoCollection<ProducerRecord> kafkaRentCollection;
 
     private final MongoCollection<Rent> rentMongoCollection;
 
@@ -37,6 +69,7 @@ public class RentRepository extends AbstractMongoRepository implements Repositor
     @Override
     public Rent save(Rent object) {
         rentMongoCollection.insertOne(object);
+        send(object);
         return object;
     }
 
