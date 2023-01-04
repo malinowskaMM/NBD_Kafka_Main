@@ -42,7 +42,7 @@ public class RentRepository extends AbstractMongoRepository implements Repositor
     public void send(Rent rent) {
         try {
             ProducerRecord<UUID, String> record = new ProducerRecord<>(Topics.CLIENT_TOPIC,
-                    rent.getId(), rent.rentInfoGet());
+                    rent.getId(), rent.rentInfoGet()+" KrolikowskiMalinowskaRental");
 
             System.out.println("\nrecord:toString()");
             System.out.println(record.toString());
