@@ -34,9 +34,8 @@ public class RentRepository extends AbstractMongoRepository implements Repositor
 
     public RentRepository() {
         super.initDbConnection();
-        //Topics.createTopic();
+        Topics.createTopic();
         this.rentMongoCollection = mongoDatabase.getCollection("rents", Rent.class);
-        //this.kafkaRentCollection = mongoDatabase.getCollection("kafkaRents", ProducerRecord.class);
         Producer.initProducer();
     }
 
@@ -44,9 +43,13 @@ public class RentRepository extends AbstractMongoRepository implements Repositor
         try {
             ProducerRecord<UUID, String> record = new ProducerRecord<>(Topics.CLIENT_TOPIC,
                     rent.getId(), rent.rentInfoGet());
+
+            System.out.println("\nrecord:toString()");
+            System.out.println(record.toString());
+            System.out.println("\n");
+
             Future<RecordMetadata> sent = getProducer().send(record);
             RecordMetadata recordMetadata = sent.get();
-            //kafkaRentCollection.insertOne(record);
         } catch (ExecutionException ee) {
             System.out.println(ee.getCause());
             assertThat(ee.getCause(), is(instanceOf(TopicExistsException.class)));
@@ -54,8 +57,6 @@ public class RentRepository extends AbstractMongoRepository implements Repositor
             System.out.println(ie.getCause());
         }
     }
-
-    //private final MongoCollection<ProducerRecord> kafkaRentCollection;
 
     private final MongoCollection<Rent> rentMongoCollection;
 

@@ -19,8 +19,8 @@ public class Topics {
     public static void createTopic(){
         Properties properties =  new Properties();
         properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka1:9192,kafka2:9292,kafka3:9392");
-        int partitionsNumber = 5;
-        short replicationFactor = 3;
+        int partitionsNumber = 3;
+        short replicationFactor = 2;
         try (Admin admin = Admin.create(properties)) {
             NewTopic newTopic = new NewTopic(Topics.CLIENT_TOPIC, partitionsNumber, replicationFactor);
             CreateTopicsOptions options = new CreateTopicsOptions()
